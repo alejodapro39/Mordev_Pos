@@ -322,7 +322,11 @@ def get_draft_details(business_id, draft_id):
     return draft
 
 def delete_draft(business_id, draft_id):
-    get_client().table("draft_invoices").delete().eq("id_negocio", business_id).eq("id", draft_id).execute()
+    try:
+        get_client().table("draft_invoices").delete().eq("id_negocio", business_id).eq("id", draft_id).execute()
+        return {"success": True}
+    except Exception as e:
+        return {"error": str(e)}
 
 # ── Reportes ───────────────────────────────────────────────────────────────────
 def get_sales(business_id, seller_id=None):
@@ -338,4 +342,8 @@ def get_sales_by_date_range(business_id, start, end):
     return get_client().table("sales").select("*").eq("id_negocio", business_id).gte("date", start).lte("date", end).order("date").execute().data
 
 def delete_sale(business_id, sale_id):
-    get_client().table("sales").delete().eq("id_negocio", business_id).eq("id", sale_id).execute()
+    try:
+        get_client().table("sales").delete().eq("id_negocio", business_id).eq("id", sale_id).execute()
+        return {"success": True}
+    except Exception as e:
+        return {"error": str(e)}
