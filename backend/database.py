@@ -146,14 +146,14 @@ def add_product(business_id, name, category, price, stock, **kwargs):
         "sale_price": price,
         "price": price,
         "stock": stock,
-        **{k: v for k, v in kwargs.items() if v is not None}
+        **{k: v for k, v in kwargs.items() if v is not None or k == "barcode"}
     }
     res = client.table("products").insert(data).execute()
     return res.data[0]['id']
 
 def update_product(business_id, product_id, **kwargs):
     client = get_client()
-    data = {k: v for k, v in kwargs.items() if v is not None}
+    data = {k: v for k, v in kwargs.items() if v is not None or k == "barcode"}
     client.table("products").update(data).eq("id_negocio", business_id).eq("id", product_id).execute()
 
 def delete_product(business_id, product_id):
