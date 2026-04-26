@@ -290,6 +290,16 @@ def get_product(product_id):
 @app.route('/api/products', methods=['POST'])
 @admin_required
 def add_product():
+    # Helper para evitar ValueErrors si viene vacío
+    def safe_float(val):
+        if val in (None, '', 'NaN', 'nan'): return 0.0
+        try: return float(val)
+        except ValueError: return 0.0
+    def safe_int(val):
+        if val in (None, '', 'NaN', 'nan'): return 0
+        try: return int(float(val))
+        except ValueError: return 0
+
     # Support both JSON and multipart form
     if request.content_type and 'multipart/form-data' in request.content_type:
         name = request.form.get('name')
@@ -306,38 +316,44 @@ def add_product():
                 file.save(os.path.join(UPLOAD_FOLDER, filename))
                 image_path = f"/uploads/{filename}"
 
-        product_id = database.add_product(session.get('business_id'), 
-            name=name,
-            category=request.form.get('category', ''),
-            price=float(price),
-            stock=int(request.form.get('stock', 0)),
-            image_path=image_path,
-            reference=request.form.get('reference', ''),
-            unit=request.form.get('unit', ''),
-            purchase_price=float(request.form.get('purchase_price', 0)),
-            sale_price=float(request.form.get('sale_price', price)),
-            is_bulk=int(request.form.get('is_bulk', 0)),
-            barcode=request.form.get('barcode', '')
-        )
+        try:
+            product_id = database.add_product(session.get('business_id'), 
+                name=name,
+                category=request.form.get('category', ''),
+                price=safe_float(price),
+                stock=safe_int(request.form.get('stock')),
+                image_path=image_path,
+                reference=request.form.get('reference', ''),
+                unit=request.form.get('unit', ''),
+                purchase_price=safe_float(request.form.get('purchase_price')),
+                sale_price=safe_float(request.form.get('sale_price', price)),
+                is_bulk=safe_int(request.form.get('is_bulk')),
+                barcode=request.form.get('barcode', '')
+            )
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
     else:
         data = request.get_json()
         if not data or 'name' not in data:
             return jsonify({"error": "Faltan campos: name"}), 400
         
-        price = data.get('price', 0)
-        product_id = database.add_product(session.get('business_id'), 
-            name=data['name'],
-            category=data.get('category', ''),
-            price=float(price),
-            stock=int(data.get('stock', 0)),
-            image_path=data.get('image_path', ''),
-            reference=data.get('reference', ''),
-            unit=data.get('unit', ''),
-            purchase_price=float(data.get('purchase_price', 0)),
-            sale_price=float(data.get('sale_price', price)),
-            is_bulk=int(data.get('is_bulk', 0)),
-            barcode=data.get('barcode', '')
-        )
+        try:
+            price = data.get('price', 0)
+            product_id = database.add_product(session.get('business_id'), 
+                name=data['name'],
+                category=data.get('category', ''),
+                price=safe_float(price),
+                stock=safe_int(data.get('stock')),
+                image_path=data.get('image_path', ''),
+                reference=data.get('reference', ''),
+                unit=data.get('unit', ''),
+                purchase_price=safe_float(data.get('purchase_price')),
+                sale_price=safe_float(data.get('sale_price', price)),
+                is_bulk=safe_int(data.get('is_bulk')),
+                barcode=data.get('barcode', '')
+            )
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
     return jsonify({"success": True, "id": product_id}), 201
 
 
