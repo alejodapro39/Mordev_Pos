@@ -44,7 +44,7 @@ MASTER_PASSWORD = "Minecra32"
 # ── Configuración de Mercado Pago ─────────────────────────────────────────────
 MP_ACCESS_TOKEN = os.environ.get("MERCADO_PAGO_ACCESS_TOKEN", "")
 APP_BASE_URL    = os.environ.get("APP_BASE_URL", "http://localhost:5000")
-PRECIO_MENSUAL  = 50000  # COP — Mensualidad Mordev POS
+PRECIO_MENSUAL  = 60000  # COP — Mensualidad Mordev POS
 
 def get_base_path():
     """Obtiene la ruta base del proyecto, compatible con ejecutables de PyInstaller."""
