@@ -328,7 +328,7 @@ def add_product():
                 purchase_price=safe_float(request.form.get('purchase_price')),
                 sale_price=safe_float(request.form.get('sale_price', price)),
                 is_bulk=safe_int(request.form.get('is_bulk')),
-                barcode=request.form.get('barcode', '')
+                barcode=request.form.get('barcode') or None
             )
         except Exception as e:
             return jsonify({"error": str(e)}), 400
@@ -350,7 +350,7 @@ def add_product():
                 purchase_price=safe_float(data.get('purchase_price')),
                 sale_price=safe_float(data.get('sale_price', price)),
                 is_bulk=safe_int(data.get('is_bulk')),
-                barcode=data.get('barcode', '')
+                barcode=data.get('barcode') or None
             )
         except Exception as e:
             return jsonify({"error": str(e)}), 400
@@ -386,7 +386,7 @@ def update_product(product_id):
             purchase_price=float(request.form.get('purchase_price')) if request.form.get('purchase_price') is not None else None,
             sale_price=float(request.form.get('sale_price')) if request.form.get('sale_price') is not None else None,
             is_bulk=int(request.form.get('is_bulk', 0)) if request.form.get('is_bulk') is not None else None,
-            barcode=request.form.get('barcode')
+            barcode=request.form.get('barcode') or None
         )
     else:
         data = request.get_json()
@@ -404,7 +404,7 @@ def update_product(product_id):
             purchase_price=float(data['purchase_price']) if 'purchase_price' in data else None,
             sale_price=float(data['sale_price']) if 'sale_price' in data else None,
             is_bulk=int(data['is_bulk']) if 'is_bulk' in data else None,
-            barcode=data.get('barcode')
+            barcode=data.get('barcode') or None
         )
     return jsonify({"success": True})
 
