@@ -1,0 +1,11 @@
+flask
+openpyxl
+werkzeug
+python-docx
+pymupdf
+pyinstaller
+pyserial
+supabase==2.3.5
+mercadopago>=2.2
+python-dotenv>=1.0
+gunicorn>=21.0

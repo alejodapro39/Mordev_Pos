@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Registro — Mordev POS</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        .register-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--bg-main);
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .register-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 440px;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 2;
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .register-icon {
+            font-size: 48px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .register-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-light);
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.5px;
+        }
+
+        .register-header p {
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-size: 15px;
+        }
+
+        .register-form .input-group {
+            margin-bottom: 20px;
+        }
+
+        .register-form input {
+            padding-left: 45px;
+            height: 50px;
+            font-size: 15px;
+        }
+
+        .btn-register {
+            height: 50px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Ambient background glow */
+        .ambient-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 200, 255, 0.15) 0%, rgba(0,0,0,0) 70%);
+            top: -200px;
+            right: -200px;
+            border-radius: 50%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .ambient-glow-2 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(150, 0, 255, 0.1) 0%, rgba(0,0,0,0) 70%);
+            bottom: -200px;
+            left: -150px;
+            border-radius: 50%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .success-state {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .success-state .material-icons-round {
+            font-size: 64px;
+            color: var(--accent-green);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow-2"></div>
+    
+    <!-- Toast Notification (Reused from index.html) -->
+    <div class="toast" id="toast" style="display:none; position:fixed; top:20px; right:20px; z-index:9999;">
+        <span class="material-icons-round" id="toastIcon">info</span>
+        <span id="toastMsg">Mensaje</span>
+    </div>
+
+    <div class="register-screen">
+        <div class="register-card">
+            <!-- Normal Form -->
+            <div id="registerFormContainer">
+                <div class="register-header">
+                    <span class="material-icons-round register-icon">storefront</span>
+                    <h1>Crea tu Negocio</h1>
+                    <p>Obtén 30 días de prueba gratis con Mordev POS</p>
+                </div>
+                <form id="registerForm" class="register-form" onsubmit="return handleRegister(event)">
+                    <div class="input-group">
+                        <span class="material-icons-round">business</span>
+                        <input type="text" id="regBusinessName" placeholder="Nombre de tu Negocio" required>
+                    </div>
+                    <div class="input-group">
+                        <span class="material-icons-round">email</span>
+                        <input type="email" id="regEmail" placeholder="Tu correo electrónico (Admin)" required>
+                    </div>
+                    <div class="input-group">
+                        <span class="material-icons-round">lock</span>
+                        <input type="password" id="regPassword" placeholder="Contraseña maestra" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full btn-register" id="btnRegister">
+                        <span class="material-icons-round">rocket_launch</span>
+                        Comenzar Ahora
+                    </button>
+                    <p id="registerError" class="error-msg" style="display:none; text-align:center; margin-top:15px;"></p>
+                </form>
+                
+                <div class="login-link">
+                    ¿Ya tienes una cuenta? <a href="/">Inicia Sesión</a>
+                </div>
+            </div>
+
+            <!-- Success State -->
+            <div id="successState" class="success-state">
+                <span class="material-icons-round">check_circle</span>
+                <h2 style="color:var(--text-light); margin-bottom:10px;">¡Cuenta Creada!</h2>
+                <p style="color:var(--text-muted); margin-bottom:25px;">Tu licencia de 30 días ha sido activada correctamente.</p>
+                <a href="/" class="btn btn-primary" style="display:inline-flex; text-decoration:none;">
+                    Ir a Iniciar Sesión
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.textContent = message;
+            toast.className = `toast ${type}`;
+            toastIcon.textContent = type === 'success' ? 'check_circle' : 'error';
+            toast.style.display = 'flex';
+            toast.style.background = type === 'error' ? 'rgba(255, 68, 68, 0.9)' : 'rgba(45, 212, 168, 0.9)';
+            toast.style.color = 'white';
+            toast.style.padding = '12px 24px';
+            toast.style.borderRadius = '8px';
+            toast.style.alignItems = 'center';
+            toast.style.gap = '8px';
+            toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3500);
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const btn = document.getElementById('btnRegister');
+            const errorEl = document.getElementById('registerError');
+            
+            const nombre_negocio = document.getElementById('regBusinessName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-icons-round">hourglass_top</span> Creando...';
+            errorEl.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre_negocio, email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Ocurrió un error en el registro');
+                }
+
+                // Show success state
+                document.getElementById('registerFormContainer').style.display = 'none';
+                document.getElementById('successState').style.display = 'block';
+
+            } catch (err) {
+                errorEl.textContent = err.message;
+                errorEl.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-icons-round">rocket_launch</span> Comenzar Ahora';
+            }
+            
+            return false;
+        }
+    </script>
+</body>
+</html>

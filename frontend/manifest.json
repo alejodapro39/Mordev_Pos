@@ -1,0 +1,28 @@
+{
+  "name": "Mordev POS",
+  "short_name": "MordevPOS",
+  "description": "Sistema de Punto de Venta desarrollado por Mordev — David Alejandro Peña Nieto",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#00c8ff",
+  "background_color": "#07080f",
+  "lang": "es-CO",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/static/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["business", "finance", "productivity"]
+}

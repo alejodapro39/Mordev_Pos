@@ -1,0 +1,1175 @@
+﻿python : 287 INFO: 
+PyInstaller: 6.16.0, 
+contrib hooks: 2025.9
+En línea: 1 Carácter: 1
++ python -m 
+PyInstaller --clean 
+AppAbarrotes.spec > 
+build_output.log 2> ...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (287 INFO: PyI   
+ ns...b hooks: 2025    
+.9:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+287 INFO: Python: 
+3.14.0
+352 INFO: Platform: Win
+dows-11-10.0.26100-SP0
+352 INFO: Python 
+environment: C:\Users\d
+avid.pena_cabify\AppDat
+a\Local\Python\pythonco
+re-3.14-64
+354 INFO: Removing 
+temporary files and 
+cleaning cache in C:\Us
+ers\david.pena_cabify\A
+ppData\Local\pyinstalle
+r
+379 INFO: Module 
+search paths 
+(PYTHONPATH):
+['C:\\Users\\david.pena
+_cabify\\Downloads\\PRU
+EBAS_PERSO\\PRUEBAS_PER
+SO\\grocery-app\\backen
+d',
+ 'C:\\Users\\david.pena
+_cabify\\AppData\\Local
+\\Python\\pythoncore-3.
+14-64\\python314.zip',
+ 'C:\\Users\\david.pena
+_cabify\\AppData\\Local
+\\Python\\pythoncore-3.
+14-64\\DLLs',
+ 'C:\\Users\\david.pena
+_cabify\\AppData\\Local
+\\Python\\pythoncore-3.
+14-64\\Lib',
+ 'C:\\Users\\david.pena
+_cabify\\AppData\\Local
+\\Python\\pythoncore-3.
+14-64',
+ 'C:\\Users\\david.pena
+_cabify\\AppData\\Local
+\\Python\\pythoncore-3.
+14-64\\Lib\\site-packag
+es',
+ 'C:\\Users\\david.pena
+_cabify\\AppData\\Local
+\\Python\\pythoncore-3.
+14-64\\Lib\\site-packag
+es\\setuptools\\_vendor
+',
+ 'C:\\Users\\david.pena
+_cabify\\Downloads\\PRU
+EBAS_PERSO\\PRUEBAS_PER
+SO\\grocery-app\\backen
+d']
+1010 INFO: Appending 
+'datas' from .spec
+1010 INFO: checking 
+Analysis
+1010 INFO: Building 
+Analysis because 
+Analysis-00.toc is non 
+existent
+1010 INFO: Looking for 
+Python shared 
+library...
+1010 INFO: Using 
+Python shared library: 
+C:\Users\david.pena_cab
+ify\AppData\Local\Pytho
+n\pythoncore-3.14-64\py
+thon314.dll
+1010 INFO: Running 
+Analysis 
+Analysis-00.toc
+1010 INFO: Target 
+bytecode optimization 
+level: 0
+1010 INFO: 
+Initializing module 
+dependency graph...
+1011 INFO: 
+Initializing module 
+graph hook caches...
+1021 INFO: Analyzing 
+modules for 
+base_library.zip ...
+3400 INFO: Processing 
+standard module hook 
+'hook-encodings.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+4163 INFO: Processing 
+standard module hook 
+'hook-pickle.py' from '
+C:\\Users\\david.pena_c
+abify\\AppData\\Local\\
+Python\\pythoncore-3.14
+-64\\Lib\\site-packages
+\\PyInstaller\\hooks'
+6908 INFO: Processing 
+standard module hook 
+'hook-difflib.py' from 
+'C:\\Users\\david.pena_
+cabify\\AppData\\Local\
+\Python\\pythoncore-3.1
+4-64\\Lib\\site-package
+s\\PyInstaller\\hooks'
+6918 INFO: Processing 
+standard module hook 
+'hook-heapq.py' from 'C
+:\\Users\\david.pena_ca
+bify\\AppData\\Local\\P
+ython\\pythoncore-3.14-
+64\\Lib\\site-packages\
+\PyInstaller\\hooks'
+7547 INFO: Caching 
+module dependency 
+graph...
+7574 INFO: Analyzing C:
+\Users\david.pena_cabif
+y\Downloads\PRUEBAS_PER
+SO\PRUEBAS_PERSO\grocer
+y-app\backend\launcher.
+py
+7633 INFO: Processing 
+standard module hook 
+'hook-_ctypes.py' from 
+'C:\\Users\\david.pena_
+cabify\\AppData\\Local\
+\Python\\pythoncore-3.1
+4-64\\Lib\\site-package
+s\\PyInstaller\\hooks'
+8042 INFO: Processing 
+pre-safe-import-module 
+hook 'hook-typing_exten
+sions.py' from 'C:\\Use
+rs\\david.pena_cabify\\
+AppData\\Local\\Python\
+\pythoncore-3.14-64\\Li
+b\\site-packages\\PyIns
+taller\\hooks\\pre_safe
+_import_module'
+8043 INFO: 
+SetuptoolsInfo: 
+initializing cached 
+setuptools info...
+11600 INFO: Processing 
+standard module hook 'h
+ook-multiprocessing.uti
+l.py' from 'C:\\Users\\
+david.pena_cabify\\AppD
+ata\\Local\\Python\\pyt
+honcore-3.14-64\\Lib\\s
+ite-packages\\PyInstall
+er\\hooks'
+11706 INFO: Processing 
+standard module hook 
+'hook-xml.py' from 'C:\
+\Users\\david.pena_cabi
+fy\\AppData\\Local\\Pyt
+hon\\pythoncore-3.14-64
+\\Lib\\site-packages\\P
+yInstaller\\hooks'
+12655 INFO: Processing 
+standard module hook 
+'hook-cryptography.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\_pyinstaller_ho
+oks_contrib\\stdhooks'
+13998 INFO: 
+hook-cryptography: 
+cryptography does not 
+seem to be using 
+dynamically linked 
+OpenSSL.
+14452 INFO: Processing 
+standard module hook 
+'hook-bcrypt.py' from '
+C:\\Users\\david.pena_c
+abify\\AppData\\Local\\
+Python\\pythoncore-3.14
+-64\\Lib\\site-packages
+\\_pyinstaller_hooks_co
+ntrib\\stdhooks'
+14528 INFO: Processing 
+standard module hook 
+'hook-platform.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+14668 INFO: Processing 
+standard module hook 
+'hook-sysconfig.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+15544 INFO: Processing 
+standard module hook 
+'hook-jinja2.py' from '
+C:\\Users\\david.pena_c
+abify\\AppData\\Local\\
+Python\\pythoncore-3.14
+-64\\Lib\\site-packages
+\\_pyinstaller_hooks_co
+ntrib\\stdhooks'
+16313 INFO: Processing 
+pre-safe-import-module 
+hook 'hook-importlib_me
+tadata.py' from 'C:\\Us
+ers\\david.pena_cabify\
+\AppData\\Local\\Python
+\\pythoncore-3.14-64\\L
+ib\\site-packages\\PyIn
+staller\\hooks\\pre_saf
+e_import_module'
+16314 INFO: 
+Setuptools: 
+'importlib_metadata' 
+appears to be a 
+setuptools-vendored 
+copy - creating alias 
+to 'setuptools._vendor.
+importlib_metadata'!
+16320 INFO: Processing 
+standard module hook 
+'hook-setuptools.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+16332 INFO: Processing 
+pre-safe-import-module 
+hook 
+'hook-distutils.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks\\pre_safe_import_mo
+dule'
+16363 INFO: Processing 
+pre-safe-import-module 
+hook 'hook-jaraco.funct
+ools.py' from 'C:\\User
+s\\david.pena_cabify\\A
+ppData\\Local\\Python\\
+pythoncore-3.14-64\\Lib
+\\site-packages\\PyInst
+aller\\hooks\\pre_safe_
+import_module'
+16363 INFO: 
+Setuptools: 
+'jaraco.functools' 
+appears to be a 
+setuptools-vendored 
+copy - creating alias 
+to 'setuptools._vendor.
+jaraco.functools'!
+16371 INFO: Processing 
+pre-safe-import-module 
+hook 'hook-more_itertoo
+ls.py' from 'C:\\Users\
+\david.pena_cabify\\App
+Data\\Local\\Python\\py
+thoncore-3.14-64\\Lib\\
+site-packages\\PyInstal
+ler\\hooks\\pre_safe_im
+port_module'
+16372 INFO: 
+Setuptools: 
+'more_itertools' 
+appears to be a 
+setuptools-vendored 
+copy - creating alias 
+to 'setuptools._vendor.
+more_itertools'!
+16752 INFO: Processing 
+pre-safe-import-module 
+hook 
+'hook-packaging.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks\\pre_safe_import_mo
+dule'
+17004 INFO: Processing 
+pre-safe-import-module 
+hook 
+'hook-jaraco.text.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks\\pre_safe_import_mo
+dule'
+17005 INFO: 
+Setuptools: 
+'jaraco.text' appears 
+to be a 
+setuptools-vendored 
+copy - creating alias 
+to 'setuptools._vendor.
+jaraco.text'!
+17015 INFO: Processing 
+standard module hook 'h
+ook-setuptools._vendor.
+jaraco.text.py' from 'C
+:\\Users\\david.pena_ca
+bify\\AppData\\Local\\P
+ython\\pythoncore-3.14-
+64\\Lib\\site-packages\
+\PyInstaller\\hooks'
+17017 INFO: Processing 
+pre-safe-import-module 
+hook 'hook-importlib_re
+sources.py' from 'C:\\U
+sers\\david.pena_cabify
+\\AppData\\Local\\Pytho
+n\\pythoncore-3.14-64\\
+Lib\\site-packages\\PyI
+nstaller\\hooks\\pre_sa
+fe_import_module'
+17018 INFO: Processing 
+standard module hook 'h
+ook-importlib_resources
+.py' from 'C:\\Users\\d
+avid.pena_cabify\\AppDa
+ta\\Local\\Python\\pyth
+oncore-3.14-64\\Lib\\si
+te-packages\\PyInstalle
+r\\hooks'
+17069 INFO: Processing 
+pre-safe-import-module 
+hook 'hook-zipp.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks\\pre_safe_import_mo
+dule'
+17070 INFO: 
+Setuptools: 'zipp' 
+appears to be a 
+setuptools-vendored 
+copy - creating alias 
+to 'setuptools._vendor.
+zipp'!
+17088 INFO: Processing 
+pre-safe-import-module 
+hook 'hook-jaraco.conte
+xt.py' from 'C:\\Users\
+\david.pena_cabify\\App
+Data\\Local\\Python\\py
+thoncore-3.14-64\\Lib\\
+site-packages\\PyInstal
+ler\\hooks\\pre_safe_im
+port_module'
+17088 INFO: 
+Setuptools: 
+'jaraco.context' 
+appears to be a 
+setuptools-vendored 
+copy - creating alias 
+to 'setuptools._vendor.
+jaraco.context'!
+17095 INFO: Processing 
+pre-safe-import-module 
+hook 'hook-backports.ta
+rfile.py' from 'C:\\Use
+rs\\david.pena_cabify\\
+AppData\\Local\\Python\
+\pythoncore-3.14-64\\Li
+b\\site-packages\\PyIns
+taller\\hooks\\pre_safe
+_import_module'
+17096 INFO: 
+Setuptools: 
+'backports.tarfile' 
+appears to be a 
+setuptools-vendored 
+copy - creating alias 
+to 'setuptools._vendor.
+backports.tarfile'!
+17178 INFO: Processing 
+standard module hook 
+'hook-backports.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\_pyinstaller_ho
+oks_contrib\\stdhooks'
+17521 INFO: Processing 
+pre-safe-import-module 
+hook 'hook-tomli.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks\\pre_safe_import_mo
+dule'
+17521 INFO: 
+Setuptools: 'tomli' 
+appears to be a 
+setuptools-vendored 
+copy - creating alias 
+to 'setuptools._vendor.
+tomli'!
+18049 INFO: Processing 
+pre-safe-import-module 
+hook 'hook-wheel.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks\\pre_safe_import_mo
+dule'
+18266 INFO: Processing 
+standard module hook 'h
+ook-setuptools._vendor.
+importlib_metadata.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+18329 INFO: Processing 
+standard module hook 
+'hook-sqlite3.py' from 
+'C:\\Users\\david.pena_
+cabify\\AppData\\Local\
+\Python\\pythoncore-3.1
+4-64\\Lib\\site-package
+s\\PyInstaller\\hooks'
+18880 INFO: Processing 
+standard module hook 
+'hook-openpyxl.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\_pyinstaller_ho
+oks_contrib\\stdhooks'
+18970 INFO: Processing 
+standard module hook 
+'hook-numpy.py' from 'C
+:\\Users\\david.pena_ca
+bify\\AppData\\Local\\P
+ython\\pythoncore-3.14-
+64\\Lib\\site-packages\
+\PyInstaller\\hooks'
+22082 INFO: Processing 
+standard module hook 'h
+ook-charset_normalizer.
+py' from 'C:\\Users\\da
+vid.pena_cabify\\AppDat
+a\\Local\\Python\\pytho
+ncore-3.14-64\\Lib\\sit
+e-packages\\_pyinstalle
+r_hooks_contrib\\stdhoo
+ks'
+22656 INFO: Processing 
+standard module hook 
+'hook-lxml.py' from 'C:
+\\Users\\david.pena_cab
+ify\\AppData\\Local\\Py
+thon\\pythoncore-3.14-6
+4\\Lib\\site-packages\\
+_pyinstaller_hooks_cont
+rib\\stdhooks'
+23411 INFO: Processing 
+standard module hook 
+'hook-lxml.etree.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\_pyinstaller_ho
+oks_contrib\\stdhooks'
+23610 INFO: Processing 
+standard module hook 'h
+ook-xml.etree.cElementT
+ree.py' from 'C:\\Users
+\\david.pena_cabify\\Ap
+pData\\Local\\Python\\p
+ythoncore-3.14-64\\Lib\
+\site-packages\\PyInsta
+ller\\hooks'
+24168 INFO: Processing 
+standard module hook 
+'hook-PIL.py' from 'C:\
+\Users\\david.pena_cabi
+fy\\AppData\\Local\\Pyt
+hon\\pythoncore-3.14-64
+\\Lib\\site-packages\\P
+yInstaller\\hooks'
+24281 INFO: Processing 
+standard module hook 
+'hook-PIL.Image.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+25040 INFO: Processing 
+standard module hook 'h
+ook-PIL.ImageFilter.py'
+ from 'C:\\Users\\david
+.pena_cabify\\AppData\\
+Local\\Python\\pythonco
+re-3.14-64\\Lib\\site-p
+ackages\\PyInstaller\\h
+ooks'
+25819 INFO: Processing 
+standard module hook 
+'hook-docx.py' from 'C:
+\\Users\\david.pena_cab
+ify\\AppData\\Local\\Py
+thon\\pythoncore-3.14-6
+4\\Lib\\site-packages\\
+_pyinstaller_hooks_cont
+rib\\stdhooks'
+31486 INFO: Processing 
+standard module hook 
+'hook-pandas.py' from '
+C:\\Users\\david.pena_c
+abify\\AppData\\Local\\
+Python\\pythoncore-3.14
+-64\\Lib\\site-packages
+\\PyInstaller\\hooks'
+34070 INFO: Processing 
+standard module hook 
+'hook-pytz.py' from 'C:
+\\Users\\david.pena_cab
+ify\\AppData\\Local\\Py
+thon\\pythoncore-3.14-6
+4\\Lib\\site-packages\\
+PyInstaller\\hooks'
+35813 INFO: Processing 
+standard module hook 
+'hook-pyarrow.py' from 
+'C:\\Users\\david.pena_
+cabify\\AppData\\Local\
+\Python\\pythoncore-3.1
+4-64\\Lib\\site-package
+s\\_pyinstaller_hooks_c
+ontrib\\stdhooks'
+36841 INFO: Processing 
+standard module hook 
+'hook-urllib3.py' from 
+'C:\\Users\\david.pena_
+cabify\\AppData\\Local\
+\Python\\pythoncore-3.1
+4-64\\Lib\\site-package
+s\\_pyinstaller_hooks_c
+ontrib\\stdhooks'
+37528 INFO: Processing 
+standard module hook 
+'hook-certifi.py' from 
+'C:\\Users\\david.pena_
+cabify\\AppData\\Local\
+\Python\\pythoncore-3.1
+4-64\\Lib\\site-package
+s\\_pyinstaller_hooks_c
+ontrib\\stdhooks'
+39220 INFO: Processing 
+standard module hook 'h
+ook-pandas.io.formats.s
+tyle.py' from 'C:\\User
+s\\david.pena_cabify\\A
+ppData\\Local\\Python\\
+pythoncore-3.14-64\\Lib
+\\site-packages\\PyInst
+aller\\hooks'
+42954 INFO: Processing 
+standard module hook 'h
+ook-pandas.plotting.py'
+ from 'C:\\Users\\david
+.pena_cabify\\AppData\\
+Local\\Python\\pythonco
+re-3.14-64\\Lib\\site-p
+ackages\\PyInstaller\\h
+ooks'
+43037 INFO: Processing 
+standard module hook 
+'hook-matplotlib.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+43657 INFO: Processing 
+pre-safe-import-module 
+hook 'hook-gi.py' from 
+'C:\\Users\\david.pena_
+cabify\\AppData\\Local\
+\Python\\pythoncore-3.1
+4-64\\Lib\\site-package
+s\\PyInstaller\\hooks\\
+pre_safe_import_module'
+44005 INFO: Processing 
+standard module hook 'h
+ook-matplotlib.backend_
+bases.py' from 'C:\\Use
+rs\\david.pena_cabify\\
+AppData\\Local\\Python\
+\pythoncore-3.14-64\\Li
+b\\site-packages\\PyIns
+taller\\hooks'
+45473 INFO: Processing 
+standard module hook 'h
+ook-matplotlib.backends
+.py' from 'C:\\Users\\d
+avid.pena_cabify\\AppDa
+ta\\Local\\Python\\pyth
+oncore-3.14-64\\Lib\\si
+te-packages\\PyInstalle
+r\\hooks'
+45628 INFO: Processing 
+standard module hook 'h
+ook-matplotlib.pyplot.p
+y' from 'C:\\Users\\dav
+id.pena_cabify\\AppData
+\\Local\\Python\\python
+core-3.14-64\\Lib\\site
+-packages\\PyInstaller\
+\hooks'
+47187 INFO: Processing 
+standard module hook 
+'hook-dateutil.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\_pyinstaller_ho
+oks_contrib\\stdhooks'
+47326 INFO: Processing 
+pre-safe-import-module 
+hook 
+'hook-six.moves.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks\\pre_safe_import_mo
+dule'
+52036 INFO: Processing 
+standard module hook 
+'hook-sqlalchemy.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+59388 INFO: Processing 
+standard module hook 'h
+ook-pandas.io.clipboard
+.py' from 'C:\\Users\\d
+avid.pena_cabify\\AppDa
+ta\\Local\\Python\\pyth
+oncore-3.14-64\\Lib\\si
+te-packages\\PyInstalle
+r\\hooks'
+60210 INFO: Processing 
+standard module hook 'h
+ook-xml.dom.domreg.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+61671 INFO: Processing 
+module hooks 
+(post-graph stage)...
+61920 INFO: Processing 
+standard module hook 'h
+ook-lxml.isoschematron.
+py' from 'C:\\Users\\da
+vid.pena_cabify\\AppDat
+a\\Local\\Python\\pytho
+ncore-3.14-64\\Lib\\sit
+e-packages\\_pyinstalle
+r_hooks_contrib\\stdhoo
+ks'
+62088 INFO: Processing 
+standard module hook 
+'hook-pycparser.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\_pyinstaller_ho
+oks_contrib\\stdhooks'
+63026 WARNING: Hidden 
+import 
+"pycparser.lextab" not 
+found!
+63026 WARNING: Hidden 
+import 
+"pycparser.yacctab" 
+not found!
+63033 WARNING: Hidden 
+import "importlib_resou
+rces.trees" not found!
+63034 INFO: Processing 
+standard module hook 'h
+ook-matplotlib.backends
+.py' from 'C:\\Users\\d
+avid.pena_cabify\\AppDa
+ta\\Local\\Python\\pyth
+oncore-3.14-64\\Lib\\si
+te-packages\\PyInstalle
+r\\hooks'
+63034 INFO: Matplotlib 
+backend selection 
+method: automatic 
+discovery of used 
+backends
+63469 INFO: Trying 
+determine the default 
+backend as first 
+importable candidate 
+from the list: 
+['QtAgg', 'Qt5Agg', 
+'Gtk4Agg', 'Gtk3Agg', 
+'TkAgg', 'WxAgg']
+64147 INFO: Selected 
+matplotlib backends: 
+['QtAgg']
+64152 INFO: Processing 
+standard module hook 'h
+ook-matplotlib.backends
+.backend_qtagg.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+64163 INFO: Processing 
+standard module hook 'h
+ook-matplotlib.backends
+.qt_compat.py' from 'C:
+\\Users\\david.pena_cab
+ify\\AppData\\Local\\Py
+thon\\pythoncore-3.14-6
+4\\Lib\\site-packages\\
+PyInstaller\\hooks'
+64630 INFO: hook-matplo
+tlib.backends.qt_compat
+: selected 'PyQt5' as 
+the only available Qt 
+bindings.
+64633 INFO: Processing 
+standard module hook 
+'hook-PyQt5.py' from 'C
+:\\Users\\david.pena_ca
+bify\\AppData\\Local\\P
+ython\\pythoncore-3.14-
+64\\Lib\\site-packages\
+\PyInstaller\\hooks'
+65850 INFO: Processing 
+standard module hook 
+'hook-PyQt5.QtCore.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+67405 INFO: Processing 
+standard module hook 'h
+ook-PyQt5.QtWidgets.py'
+ from 'C:\\Users\\david
+.pena_cabify\\AppData\\
+Local\\Python\\pythonco
+re-3.14-64\\Lib\\site-p
+ackages\\PyInstaller\\h
+ooks'
+68705 INFO: Processing 
+standard module hook 
+'hook-PyQt5.QtGui.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+69647 INFO: Processing 
+standard module hook 'h
+ook-PIL.SpiderImagePlug
+in.py' from 'C:\\Users\
+\david.pena_cabify\\App
+Data\\Local\\Python\\py
+thoncore-3.14-64\\Lib\\
+site-packages\\PyInstal
+ler\\hooks'
+69805 INFO: Processing 
+standard module hook 
+'hook-sqlalchemy.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+70422 WARNING: Hidden 
+import "pysqlite2" not 
+found!
+70423 WARNING: Hidden 
+import "MySQLdb" not 
+found!
+70423 WARNING: Hidden 
+import "psycopg2" not 
+found!
+71837 INFO: Processing 
+standard module hook 'h
+ook-lxml.objectify.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\_pyinstaller_ho
+oks_contrib\\stdhooks'
+71875 INFO: Performing 
+binary vs. data 
+reclassification (1586 
+entries)
+72308 INFO: Looking 
+for ctypes DLLs
+72431 INFO: Analyzing 
+run-time hooks ...
+72441 INFO: Including 
+run-time hook 
+'pyi_rth_inspect.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks\\rthooks'
+72446 INFO: Including 
+run-time hook 
+'pyi_rth_pkgutil.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks\\rthooks'
+72449 INFO: Including 
+run-time hook 'pyi_rth_
+multiprocessing.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks\\rthooks'
+72452 INFO: Including 
+run-time hook 'pyi_rth_
+cryptography_openssl.py
+' from 'C:\\Users\\davi
+d.pena_cabify\\AppData\
+\Local\\Python\\pythonc
+ore-3.14-64\\Lib\\site-
+packages\\_pyinstaller_
+hooks_contrib\\rthooks'
+72454 INFO: Including 
+run-time hook 'pyi_rth_
+setuptools.py' from 'C:
+\\Users\\david.pena_cab
+ify\\AppData\\Local\\Py
+thon\\pythoncore-3.14-6
+4\\Lib\\site-packages\\
+PyInstaller\\hooks\\rth
+ooks'
+72457 INFO: Including 
+run-time hook 
+'pyi_rth_pyqt5.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks\\rthooks'
+72460 INFO: Processing 
+pre-find-module-path 
+hook 'hook-_pyi_rth_uti
+ls.py' from 'C:\\Users\
+\david.pena_cabify\\App
+Data\\Local\\Python\\py
+thoncore-3.14-64\\Lib\\
+site-packages\\PyInstal
+ler\\hooks\\pre_find_mo
+dule_path'
+72463 INFO: Processing 
+standard module hook 'h
+ook-_pyi_rth_utils.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks'
+72468 INFO: Including 
+run-time hook 
+'pyi_rth_mplconfig.py' 
+from 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\PyInstaller\\ho
+oks\\rthooks'
+72558 INFO: Creating 
+base_library.zip...
+72627 INFO: Looking 
+for dynamic libraries
+75751 INFO: Extra DLL 
+search directories 
+(AddDllDirectory): ['C:
+\\Users\\david.pena_cab
+ify\\AppData\\Local\\Py
+thon\\pythoncore-3.14-6
+4\\Lib\\site-packages\\
+PyQt5\\Qt5\\bin', 'C:\\
+Users\\david.pena_cabif
+y\\AppData\\Local\\Pyth
+on\\pythoncore-3.14-64\
+\Lib\\site-packages\\nu
+mpy.libs', 'C:\\Users\\
+david.pena_cabify\\AppD
+ata\\Local\\Python\\pyt
+honcore-3.14-64\\Lib\\s
+ite-packages\\pandas.li
+bs', 'C:\\Users\\david.
+pena_cabify\\AppData\\L
+ocal\\Python\\pythoncor
+e-3.14-64\\Lib\\site-pa
+ckages\\pyarrow.libs']
+75751 INFO: Extra DLL 
+search directories 
+(PATH): ['C:\\Users\\da
+vid.pena_cabify\\AppDat
+a\\Local\\Python\\pytho
+ncore-3.14-64\\Lib\\sit
+e-packages\\PyQt5\\Qt5\
+\bin']
+77174 INFO: Warnings 
+written to C:\Users\dav
+id.pena_cabify\Download
+s\PRUEBAS_PERSO\PRUEBAS
+_PERSO\grocery-app\back
+end\build\AppAbarrotes\
+warn-AppAbarrotes.txt
+77386 INFO: Graph 
+cross-reference 
+written to C:\Users\dav
+id.pena_cabify\Download
+s\PRUEBAS_PERSO\PRUEBAS
+_PERSO\grocery-app\back
+end\build\AppAbarrotes\
+xref-AppAbarrotes.html
+77493 INFO: checking 
+PYZ
+77493 INFO: Building 
+PYZ because PYZ-00.toc 
+is non existent
+77493 INFO: Building 
+PYZ (ZlibArchive) C:\Us
+ers\david.pena_cabify\D
+ownloads\PRUEBAS_PERSO\
+PRUEBAS_PERSO\grocery-a
+pp\backend\build\AppAba
+rrotes\PYZ-00.pyz
+79367 INFO: Building 
+PYZ (ZlibArchive) C:\Us
+ers\david.pena_cabify\D
+ownloads\PRUEBAS_PERSO\
+PRUEBAS_PERSO\grocery-a
+pp\backend\build\AppAba
+rrotes\PYZ-00.pyz 
+completed successfully.
+79440 INFO: checking 
+PKG
+79440 INFO: Building 
+PKG because PKG-00.toc 
+is non existent
+79440 INFO: Building 
+PKG (CArchive) 
+AppAbarrotes.pkg
+95714 INFO: Building 
+PKG (CArchive) 
+AppAbarrotes.pkg 
+completed successfully.
+95773 INFO: Bootloader 
+C:\Users\david.pena_cab
+ify\AppData\Local\Pytho
+n\pythoncore-3.14-64\Li
+b\site-packages\PyInsta
+ller\bootloader\Windows
+-64bit-intel\runw.exe
+95773 INFO: checking 
+EXE
+95773 INFO: Building 
+EXE because EXE-00.toc 
+is non existent
+95773 INFO: Building 
+EXE from EXE-00.toc
+Traceback (most recent 
+call last):
+  File "<frozen 
+runpy>", line 198, in 
+_run_module_as_main
+  File "<frozen 
+runpy>", line 88, in 
+_run_code
+  File "C:\Users\david.
+pena_cabify\AppData\Loc
+al\Python\pythoncore-3.
+14-64\Lib\site-packages
+\PyInstaller\__main__.p
+y", line 321, in 
+<module>
+    run()
+    ~~~^^
+  File "C:\Users\david.
+pena_cabify\AppData\Loc
+al\Python\pythoncore-3.
+14-64\Lib\site-packages
+\PyInstaller\__main__.p
+y", line 215, in run
+    
+run_build(pyi_config, 
+spec_file, 
+**vars(args))
+    ~~~~~~~~~^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
+^^^^
+  File "C:\Users\david.
+pena_cabify\AppData\Loc
+al\Python\pythoncore-3.
+14-64\Lib\site-packages
+\PyInstaller\__main__.p
+y", line 70, in 
+run_build
+    PyInstaller.buildin
+g.build_main.main(pyi_c
+onfig, spec_file, 
+**kwargs)
+    ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
+^^^^
+  File "C:\Users\david.
+pena_cabify\AppData\Loc
+al\Python\pythoncore-3.
+14-64\Lib\site-packages
+\PyInstaller\building\b
+uild_main.py", line 
+1272, in main
+    build(specfile, 
+distpath, workpath, 
+clean_build)
+    ~~~~~^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^
+  File "C:\Users\david.
+pena_cabify\AppData\Loc
+al\Python\pythoncore-3.
+14-64\Lib\site-packages
+\PyInstaller\building\b
+uild_main.py", line 
+1210, in build
+    exec(code, 
+spec_namespace)
+    ~~~~^^^^^^^^^^^^^^^
+^^^^^^^
+  File 
+"AppAbarrotes.spec", 
+line 19, in <module>
+    exe = EXE(
+        pyz,
+    ...<17 lines>...
+        
+icon=['app_icon.ico'],
+    )
+  File "C:\Users\david.
+pena_cabify\AppData\Loc
+al\Python\pythoncore-3.
+14-64\Lib\site-packages
+\PyInstaller\building\a
+pi.py", line 675, in 
+__init__
+    self.__postinit__()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\david.
+pena_cabify\AppData\Loc
+al\Python\pythoncore-3.
+14-64\Lib\site-packages
+\PyInstaller\building\d
+atastruct.py", line 
+184, in __postinit__
+    self.assemble()
+    ~~~~~~~~~~~~~^^
+  File "C:\Users\david.
+pena_cabify\AppData\Loc
+al\Python\pythoncore-3.
+14-64\Lib\site-packages
+\PyInstaller\building\a
+pi.py", line 769, in 
+assemble
+    
+os.remove(self.name)
+    
+~~~~~~~~~^^^^^^^^^^^
+PermissionError: 
+[WinError 5] Acceso 
+denegado: 'C:\\Users\\d
+avid.pena_cabify\\Downl
+oads\\PRUEBAS_PERSO\\PR
+UEBAS_PERSO\\grocery-ap
+p\\backend\\dist\\AppAb
+arrotes.exe'

@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mordev POS</title>
+    <meta name="description" content="Sistema de Punto de Venta — Mordev by David Alejandro Peña Nieto">
+    <meta name="theme-color" content="#00c8ff">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Mordev POS">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/x-icon" href="/static/ico.ico">
+    <link rel="apple-touch-icon" href="/static/ico.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- BARCODE SCANNER CAPTURE -->
+    <input type="text" id="barcodeScannerCapture" autofocus>
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <div class="login-header">
+                <span class="material-icons-round login-icon">pets</span>
+                <h1>PawStore</h1>
+                <p>Ingresa tus credenciales para continuar</p>
+            </div>
+            <form id="loginForm" onsubmit="return handleLogin(event)">
+                <div class="input-group">
+                    <span class="material-icons-round">person</span>
+                    <input type="text" id="loginUsername" placeholder="Usuario" required autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <span class="material-icons-round">lock</span>
+                    <input type="password" id="loginPassword" placeholder="Contraseña" required
+                        autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
+                    <span class="material-icons-round">login</span>
+                    Iniciar Sesión
+                </button>
+                <p id="loginError" class="error-msg" style="display:none;"></p>
+            </form>
+            <div style="text-align: center; margin-top: 25px; color: var(--text-muted); font-size: 14px;">
+                ¿No tienes una cuenta? <a href="/register" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Regístrate</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="mainApp" class="main-app" style="display:none;">
+        <!-- Mobile Header -->
+        <header class="mobile-header">
+            <button class="btn-icon" onclick="toggleSidebar()">
+                <span class="material-icons-round">menu</span>
+            </button>
+            <div class="mobile-logo">
+                <span class="material-icons-round">pets</span>
+                <span>PawStore</span>
+            </div>
+            <div class="user-avatar-sm" onclick="showView('settings')">
+                <span id="mobileUserInitial">U</span>
+            </div>
+        </header>
+
+        <!-- Mobile Bottom Nav -->
+        <nav class="mobile-nav">
+            <div class="mobile-nav-item active" onclick="switchView('sales')">
+                <span class="material-icons-round">shopping_cart</span>
+                <span>Vender</span>
+            </div>
+            <div class="mobile-nav-item" onclick="switchView('products')">
+                <span class="material-icons-round">inventory_2</span>
+                <span>Stock</span>
+            </div>
+            <div class="mobile-nav-item" onclick="switchView('history')">
+                <span class="material-icons-round">history</span>
+                <span>Ventas</span>
+            </div>
+            <div class="mobile-nav-item" onclick="switchView('settings')">
+                <span class="material-icons-round">settings</span>
+                <span>Más</span>
+            </div>
+        </nav>
+
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <img src="/static/ico.ico" alt="M" style="width:28px;height:28px;border-radius:6px;object-fit:cover;" onerror="this.style.display='none'">
+                <h2>Mordev POS</h2>
+            </div>
+            <!-- Badge estado de licencia -->
+            <div id="licenseBadge" style="
+                margin: 0 12px 8px;
+                padding: 8px 12px;
+                border-radius: 10px;
+                background: rgba(0,200,255,0.08);
+                border: 1px solid rgba(0,200,255,0.2);
+                font-size: 12px;
+                display: none;
+                align-items: center;
+                gap: 7px;
+                color: #a0b0c8;
+            ">
+                <span class="material-icons-round" style="font-size:15px;color:#00c8ff">verified</span>
+                <span id="licenseBadgeText">Cargando...</span>
+            </div>
+            <div class="sidebar-user">
+                <div class="user-avatar-wrapper" onclick="document.getElementById('avatarFileInput').click()"
+                    title="Cambiar foto de perfil">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="avatar-overlay">
+                        <span class="material-icons-round">photo_camera</span>
+                    </div>
+                </div>
+                <input type="file" id="avatarFileInput" accept="image/*" style="display:none"
+                    onchange="uploadProfileImage(event)">
+                <div class="user-info">
+                    <span id="userName" class="user-name">Admin</span>
+                    <span id="userRole" class="user-role">Administrador</span>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-view="dashboard" onclick="switchView('dashboard')">
+                    <span class="material-icons-round">dashboard</span>
+                    <span>Dashboard</span>
+                </li>
+                <li class="nav-item" data-view="products" onclick="switchView('products')">
+                    <span class="material-icons-round">inventory_2</span>
+                    <span>Productos</span>
+                </li>
+                <li class="nav-item" data-view="sales" onclick="switchView('sales')">
+                    <span class="material-icons-round">point_of_sale</span>
+                    <span>Nueva Venta</span>
+                </li>
+                <li class="nav-item" data-view="history" onclick="switchView('history')">
+                    <span class="material-icons-round">receipt_long</span>
+                    <span>Historial</span>
+                </li>
+                <li class="nav-item" data-view="drafts" onclick="switchView('drafts')">
+                    <span class="material-icons-round">folder_open</span>
+                    <span>Facturas Abiertas</span>
+                </li>
+                <li class="nav-item admin-only" data-view="users" onclick="switchView('users')">
+                    <span class="material-icons-round">group</span>
+                    <span>Usuarios</span>
+                </li>
+                <li class="nav-item admin-only" data-view="reports" onclick="switchView('reports')">
+                    <span class="material-icons-round">assessment</span>
+                    <span>Reportes</span>
+                </li>
+                <li class="nav-item admin-only" data-view="import" onclick="switchView('import')">
+                    <span class="material-icons-round">upload_file</span>
+                    <span>Importar Excel</span>
+                </li>
+                <li class="nav-item admin-only" data-view="settings" onclick="switchView('settings')">
+                    <span class="material-icons-round">settings</span>
+                    <span>Configuración</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <button class="btn btn-logout" onclick="handleLogout()">
+                    <span class="material-icons-round">logout</span>
+                    Cerrar Sesión
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- DASHBOARD VIEW -->
+            <section id="view-dashboard" class="view active">
+                <div class="view-header">
+                    <h1>Dashboard</h1>
+                    <p>Resumen general del sistema</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card stat-blue">
+                        <span class="material-icons-round">inventory_2</span>
+                        <div>
+                            <h3 id="statProducts">0</h3>
+                            <p>Productos</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-green">
+                        <span class="material-icons-round">attach_money</span>
+                        <div>
+                            <h3 id="statSales">COP 0</h3>
+                            <p>Ventas Totales</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-purple">
+                        <span class="material-icons-round">shopping_cart</span>
+                        <div>
+                            <h3 id="statTransactions">0</h3>
+                            <p>Transacciones</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-orange">
+                        <span class="material-icons-round">warning</span>
+                        <div>
+                            <h3 id="statLowStock">0</h3>
+                            <p>Stock Bajo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DASHBOARD CHARTS -->
+                <div class="dashboard-charts" id="dashboardCharts">
+                    <div class="chart-card">
+                        <h3>Ventas por Día de la Semana</h3>
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Ventas Mensuales</h3>
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="recent-sales">
+                    <h2>Ventas Recientes</h2>
+                    <div class="table-container">
+                        <table id="recentSalesTable">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                    <th>Vendedor</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentSalesBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRODUCTS VIEW -->
+            <section id="view-products" class="view">
+                <div class="view-header">
+                    <h1>Inventario de Productos</h1>
+                    <div class="view-actions">
+                        <div class="search-box">
+                            <span class="material-icons-round">search</span>
+                            <input type="text" id="productSearch" placeholder="Buscar producto..."
+                                oninput="filterProducts()">
+                        </div>
+                        <button class="btn btn-secondary admin-only" onclick="exportInventoryExcel()" title="Descargar inventario en Excel">
+                            <span class="material-icons-round">download</span>
+                            Exportar Excel
+                        </button>
+                        <button class="btn btn-primary admin-only" onclick="showProductModal()">
+                            <span class="material-icons-round">add</span>
+                            Agregar Producto
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Referencia</th>
+                                <th>Unidad</th>
+                                <th>Categoría</th>
+                                <th>P. Compra</th>
+                                <th>P. Venta</th>
+                                <th>Stock</th>
+                                <th class="admin-only">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SALES VIEW -->
+            <section id="view-sales" class="view">
+                <div class="view-header">
+                    <h1>Registrar Venta</h1>
+                    <p>Selecciona un producto y la cantidad para registrar una venta</p>
+                </div>
+
+                <!-- Floating Cart Button for Mobile -->
+                <button class="btn-mobile-cart" onclick="toggleMobileCart()">
+                    <span class="material-icons-round">shopping_cart</span>
+                    <span class="cart-badge" id="mobileCartBadge">0</span>
+                </button>
+                <div class="sale-form-container">
+                    <div class="sale-product-search">
+                        <div class="input-group">
+                            <span class="material-icons-round">search</span>
+                            <input type="text" id="saleProductSearch" placeholder="Buscar producto..."
+                                oninput="filterSaleProducts()">
+                        </div>
+                        <div class="product-grid" id="saleProductGrid"></div>
+                    </div>
+                    <div class="sale-cart">
+                        <div class="cart-main-section">
+                            <h2><span class="material-icons-round">shopping_cart</span> Carrito</h2>
+                            <div id="cartItems" class="cart-items">
+                                <p class="empty-cart">El carrito está vacío</p>
+                            </div>
+                        </div>
+
+                        <div class="cart-total">
+                            <span>Total Venta:</span>
+                            <span id="cartTotal">$0.00</span>
+                        </div>
+
+                        <div class="cart-customer-section">
+                            <!-- Customer Info Form -->
+                            <div class="sale-customer-info">
+                                <!-- Section Header -->
+                                <div class="customer-section-header">
+                                    <div class="customer-section-title">
+                                        <div class="customer-icon-wrap">
+                                            <span class="material-icons-round">person_search</span>
+                                        </div>
+                                        <div>
+                                            <h3>Datos del Cliente</h3>
+                                            <span id="customerStatusBadge" class="customer-status-badge badge-new">
+                                                <span class="badge-dot"></span>
+                                                Cliente nuevo
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- NIT Search Row -->
+                                <div class="nid-search-row">
+                                    <div class="form-group-sale" style="flex:1">
+                                        <label class="field-label">
+                                            <span class="material-icons-round">badge</span>
+                                            NIT / C.C.
+                                        </label>
+                                        <div class="input-with-icon nid-input-wrap">
+                                            <span class="material-icons-round input-icon">fingerprint</span>
+                                            <input type="text" id="customerNid" placeholder="Buscar por NIT o C.C."
+                                                onchange="searchCustomerByNid()">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Client Fields Card -->
+                                <div class="client-fields-card">
+                                    <div class="client-fields-grid">
+                                        <div class="form-group-sale">
+                                            <label class="field-label">
+                                                <span class="material-icons-round">person</span>
+                                                Nombre del Cliente
+                                            </label>
+                                            <div class="input-with-icon">
+                                                <span class="material-icons-round input-icon">person</span>
+                                                <input type="text" id="customerName" placeholder="Nombre completo">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-sale">
+                                            <label class="field-label">
+                                                <span class="material-icons-round">phone</span>
+                                                Teléfono
+                                            </label>
+                                            <div class="input-with-icon">
+                                                <span class="material-icons-round input-icon">phone</span>
+                                                <input type="text" id="customerPhone"
+                                                    placeholder="Teléfono de contacto">
+                                            </div>
+                                        </div>
+                                        <div class="form-group-sale client-address-field">
+                                            <label class="field-label">
+                                                <span class="material-icons-round">location_on</span>
+                                                Dirección
+                                            </label>
+                                            <div class="input-with-icon">
+                                                <span class="material-icons-round input-icon">location_on</span>
+                                                <input type="text" id="customerAddress"
+                                                    placeholder="Dirección de envío">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Section -->
+                                <div class="payment-section-header">
+                                    <div class="payment-icon-wrap">
+                                        <span class="material-icons-round">payments</span>
+                                    </div>
+                                    <h3>Detalles del Pago</h3>
+                                </div>
+
+                                <div class="payment-fields-card">
+                                    <div class="payment-details-grid">
+                                        <div class="form-group-sale full-width">
+                                            <label class="field-label">
+                                                <span class="material-icons-round">payment</span>
+                                                Forma de Pago
+                                            </label>
+                                            <div class="payment-method-selector">
+                                                <button type="button" class="pay-method-btn active"
+                                                    data-method="Contado" onclick="selectPayMethod(this)">
+                                                    <span class="material-icons-round">attach_money</span>
+                                                    Contado
+                                                </button>
+                                                <button type="button" class="pay-method-btn"
+                                                    data-method="M. Electronico" onclick="selectPayMethod(this)">
+                                                    <span class="material-icons-round">smartphone</span>
+                                                    Electrónico
+                                                </button>
+                                                <button type="button" class="pay-method-btn" data-method="Crédito"
+                                                    onclick="selectPayMethod(this)">
+                                                    <span class="material-icons-round">credit_card</span>
+                                                    Crédito
+                                                </button>
+                                            </div>
+                                            <select id="salePaymentMethod" style="display:none">
+                                                <option value="Contado">Contado</option>
+                                                <option value="M. Electronico">Medio Electrónico</option>
+                                                <option value="Crédito">Crédito</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Register Toggle -->
+                                <div class="register-toggle-row">
+                                    <div class="register-toggle-info">
+                                        <span class="material-icons-round">how_to_reg</span>
+                                        <div>
+                                            <span class="toggle-label">Registrar / Actualizar cliente</span>
+                                            <span class="toggle-desc">Guarda los datos del cliente en el sistema</span>
+                                        </div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="registerCustomerCheckbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cart-actions-section">
+                            <div class="cart-actions-grid">
+                                <button class="btn btn-secondary btn-full" onclick="saveAsDraft()" id="saveDraftBtn">
+                                    <span class="material-icons-round">save</span>
+                                    Guardar Borrador
+                                </button>
+                                <button class="btn btn-primary btn-full" onclick="completeSale()" id="completeSaleBtn"
+                                    disabled>
+                                    <span class="material-icons-round">check_circle</span>
+                                    Completar Venta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HISTORY VIEW -->
+            <section id="view-history" class="view">
+                <div class="view-header">
+                    <h1>Historial de Ventas</h1>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unit.</th>
+                                <th>Total</th>
+                                <th>Vendedor</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- DRAFTS VIEW (Facturas Abiertas) -->
+            <section id="view-drafts" class="view">
+                <div class="view-header">
+                    <h1>Facturas Abiertas</h1>
+                    <p>Gestiona tus borradores de venta para completarlos después</p>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>NIT/C.C.</th>
+                                <th>Total</th>
+                                <th>Vendedor</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="draftsBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- USERS VIEW (Admin) -->
+            <section id="view-users" class="view">
+                <div class="view-header">
+                    <h1>Gestión de Usuarios</h1>
+                    <button class="btn btn-primary" onclick="showUserModal()">
+                        <span class="material-icons-round">person_add</span>
+                        Crear Usuario
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Usuario</th>
+                                <th>Rol</th>
+                                <th>Creado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- IMPORT VIEW (Admin) -->
+            <section id="view-import" class="view">
+                <div class="view-header">
+                    <h1>Importar desde Excel</h1>
+                    <p>Sube un archivo .xlsx con columnas: nombre, categoría, precio, stock</p>
+                </div>
+                <div class="import-container">
+                    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('excelFile').click()"
+                        ondragover="event.preventDefault(); this.classList.add('dragover')"
+                        ondragleave="this.classList.remove('dragover')" ondrop="handleDrop(event)">
+                        <span class="material-icons-round upload-icon">cloud_upload</span>
+                        <h3>Arrastra tu archivo Excel aquí</h3>
+                        <p>o haz clic para seleccionar</p>
+                        <input type="file" id="excelFile" accept=".xlsx,.xls" style="display:none"
+                            onchange="handleFileSelect(event)">
+                    </div>
+                    <div id="importStatus" class="import-status" style="display:none;"></div>
+                </div>
+            </section>
+            <!-- REPORTS VIEW (Admin) -->
+            <section id="view-reports" class="view">
+                <div class="view-header">
+                    <h1>Reportes de Ventas</h1>
+                    <p>Genera reportes detallados en formato Excel o Word</p>
+                </div>
+                <div class="report-container">
+                    <div class="report-card">
+                        <form id="reportForm" onsubmit="return handleGenerateReport(event)">
+                            <div class="form-group">
+                                <label>Período</label>
+                                <select id="reportPeriod" onchange="toggleReportDates()">
+                                    <option value="today">Hoy</option>
+                                    <option value="yesterday">Ayer</option>
+                                    <option value="this_week">Esta Semana</option>
+                                    <option value="this_month">Este Mes</option>
+                                    <option value="this_year">Este Año</option>
+                                    <option value="custom">Rango Personalizado</option>
+                                </select>
+                            </div>
+
+                            <div id="customDates" class="form-row" style="display:none;">
+                                <div class="form-group">
+                                    <label>Desde</label>
+                                    <input type="date" id="reportStartDate">
+                                </div>
+                                <div class="form-group">
+                                    <label>Hasta</label>
+                                    <input type="date" id="reportEndDate">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Formato de Exportación</label>
+                                <select id="reportFormat">
+                                    <option value="excel">Microsoft Excel (.xlsx)</option>
+                                    <option value="word">Microsoft Word (.docx)</option>
+                                </select>
+                            </div>
+
+                            <div class="report-actions">
+                                <button type="submit" class="btn btn-primary btn-full">
+                                    <span class="material-icons-round">download</span>
+                                    Generar y Descargar Reporte
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="report-info">
+                        <h3><span class="material-icons-round">info</span> Información</h3>
+                        <p>Los reportes incluyen un listado detallado de todas las ventas realizadas en el período
+                            seleccionado, incluyendo:</p>
+                        <ul>
+                            <li>Nombre del producto</li>
+                            <li>Cantidad vendida</li>
+                            <li>Precio unitario y total</li>
+                            <li>Vendedor que realizó la transacción</li>
+                            <li>Fecha y hora exacta</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <!-- SETTINGS VIEW (Admin) -->
+            <section id="view-settings" class="view">
+                <div class="view-header">
+                    <h1>Configuración del Sistema</h1>
+                    <p>Gestiona el bloqueo, la báscula y el formato de factura</p>
+                </div>
+                <div class="settings-grid">
+                    <!-- Factura Config -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="material-icons-round">receipt</span>
+                            <h3>Formato de Factura</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Personaliza cómo se ven tus facturas impresas.</p>
+                            <button class="btn btn-secondary btn-full" onclick="openInvoiceEditor()">
+                                <span class="material-icons-round">edit_note</span>
+                                Editar Datos de Negocio
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mi Suscripción -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="material-icons-round">workspace_premium</span>
+                            <h3>Mi Suscripción</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="margin-bottom: 15px;">
+                                <p style="font-size: 14px; margin-bottom: 5px;">Días restantes: <strong id="subsDiasRestantes">--</strong></p>
+                                <p style="font-size: 12px; color: var(--text-secondary);">Vence: <span id="subsVencimiento">--/--/----</span></p>
+                            </div>
+                            <button class="btn btn-primary btn-full" onclick="createSubscriptionPreference()">
+                                <span class="material-icons-round">payment</span>
+                                Pagar 30 días con Mercado Pago
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Báscula Config -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="material-icons-round">monitor_weight</span>
+                            <h3>Báscula Electrónica</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Puerto COM</label>
+                                <div style="display:flex; gap:8px;">
+                                    <select id="scalePortSelect">
+                                        <option value="">Cargando puertos...</option>
+                                    </select>
+                                    <button class="btn-icon" onclick="refreshScalePorts()" title="Refrescar">
+                                        <span class="material-icons-round">refresh</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Velocidad (Baudios)</label>
+                                <select id="scaleBaudrateSelect">
+                                    <option value="9600">9600</option>
+                                    <option value="4800">4800</option>
+                                    <option value="2400">2400</option>
+                                    <option value="19200">19200</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary btn-full" onclick="saveScaleConfig()">
+                                <span class="material-icons-round">save</span>
+                                Guardar Configuración
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL: Producto -->
+    <div id="productModal" class="modal" style="display:none;">
+        <div class="modal-content modal-content-product">
+            <div class="modal-header">
+                <h2 id="productModalTitle">Agregar Producto</h2>
+                <button class="btn-icon" onclick="closeProductModal()">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <form id="productForm" onsubmit="return saveProduct(event)">
+                <input type="hidden" id="productId">
+                
+                <!-- Product Type Selector -->
+                <div class="product-type-selector">
+                    <button type="button" id="btnTypeStock" class="type-btn active" onclick="setProductType('stock')">
+                        <span class="material-icons-round">inventory_2</span>
+                        Venta por Stock
+                    </button>
+                    <button type="button" id="btnTypeBulk" class="type-btn" onclick="setProductType('bulk')">
+                        <span class="material-icons-round">scale</span>
+                        Venta a Granel
+                    </button>
+                    <input type="checkbox" id="productIsBulk" style="display:none">
+                </div>
+
+                <!-- Image (small, centered) -->
+                <div class="product-img-top">
+                    <div class="image-upload-zone-top" id="productImageZone" onclick="document.getElementById('productImageInput').click()">
+                        <div class="image-preview" id="productImagePreview" style="display:none;">
+                            <img id="productImagePreviewImg" src="" alt="Preview">
+                            <button type="button" class="image-remove-btn" onclick="event.stopPropagation(); removeProductImage()">
+                                <span class="material-icons-round">close</span>
+                            </button>
+                        </div>
+                        <div class="image-placeholder" id="productImagePlaceholder">
+                            <span class="material-icons-round">add_a_photo</span>
+                            <p>Foto del producto</p>
+                        </div>
+                        <input type="file" id="productImageInput" accept="image/*" style="display:none" onchange="previewProductImage(event)">
+                    </div>
+                </div>
+
+                <!-- Name (always visible) -->
+                <div class="form-group">
+                    <label class="field-label-amigable"><span class="material-icons-round">label</span> Nombre del Producto</label>
+                    <input type="text" id="productName" placeholder="Ejem: Chunky Adultos" required>
+                </div>
+
+                <!-- Price & Stock -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label id="lblProductSalePrice" class="field-label-amigable"><span class="material-icons-round">payments</span> P. Venta (COP)</label>
+                        <input type="number" id="productSalePrice" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label id="lblProductStock" class="field-label-amigable"><span class="material-icons-round">inventory</span> Cuánto hay</label>
+                        <input type="number" id="productStock" step="0.001" min="0" placeholder="0.00" required>
+                    </div>
+                </div>
+
+                <!-- Extra Fields (Hidden if Bulk) -->
+                <div id="extraFieldsStock">
+                    <div class="form-group">
+                        <label class="field-label-amigable"><span class="material-icons-round">category</span> Categoría</label>
+                        <input type="text" id="productCategory" placeholder="Ejem: Alimento Perro">
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="field-label-amigable"><span class="material-icons-round">tag</span> Referencia</label>
+                            <input type="text" id="productReference" placeholder="Opcional">
+                        </div>
+                        <div class="form-group">
+                            <label class="field-label-amigable"><span class="material-icons-round">straighten</span> Unidad</label>
+                            <input type="text" id="productUnit" placeholder="Ejem: Galón, Bulto">
+                        </div>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="field-label-amigable"><span class="material-icons-round">shopping_cart_checkout</span> P. Compra (COP)</label>
+                            <input type="number" id="productPurchasePrice" step="0.01" min="0" placeholder="Costo">
+                        </div>
+                        <div class="form-group">
+                            <label class="field-label-amigable"><span class="material-icons-round">barcode_reader</span> Código de Barras</label>
+                            <input type="text" id="productBarcode" placeholder="Escanear o escribir">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="display:none;">
+                    <label>Precio (Antiguo)</label>
+                    <input type="number" id="productPrice">
+                </div>
+                <div class="modal-footer-amigable">
+                    <button type="button" class="btn btn-secondary btn-outline" onclick="closeProductModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-save-big">
+                        <span class="material-icons-round">save</span>
+                        Guardar Producto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Usuario -->
+    <div id="userModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Crear Usuario</h2>
+                <button class="btn-icon" onclick="closeUserModal()">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <form onsubmit="return saveUser(event)">
+                <div class="form-group">
+                    <label>Nombre de usuario</label>
+                    <input type="text" id="newUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="newPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Rol</label>
+                    <select id="newRole" required>
+                        <option value="vendedor">Vendedor</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeUserModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Báscula / Pesaje -->
+    <div id="scaleModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:400px;">
+            <div class="modal-header">
+                <h2>Pesaje de Producto</h2>
+                <button class="btn-icon" onclick="closeScaleModal()">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body scale-modal-body">
+                <h3 id="scaleProductName" class="scale-product-title"></h3>
+                
+                <div class="scale-info-grid">
+                    <div class="scale-info-item">
+                        <span class="material-icons-round">payments</span>
+                        <div class="info-texts">
+                            <label>Precio por Kilo</label>
+                            <span id="scaleProductPriceLabel">$ 0</span>
+                        </div>
+                    </div>
+                    <div class="scale-info-item">
+                        <span class="material-icons-round">inventory_2</span>
+                        <div class="info-texts">
+                            <label>Stock Disponible</label>
+                            <span id="scaleProductStockLabel">0.000 kg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scale-display-wrap">
+                    <div class="scale-reading-display">
+                        <span id="scaleWeight">0.000</span><span class="scale-unit">kg</span>
+                    </div>
+                    <p class="scale-reading-hint">Esperando peso de la báscula...</p>
+                </div>
+
+                <div class="form-group manual-weight-group">
+                    <label class="field-label">
+                        <span class="material-icons-round">edit</span>
+                        O ingreso manual de peso
+                    </label>
+                    <div class="input-with-icon">
+                        <span class="material-icons-round input-icon">scale</span>
+                        <input type="number" id="manualWeight" step="0.001" placeholder="Ej: 1.250">
+                    </div>
+                </div>
+
+                <div class="scale-total-section">
+                    <span class="total-label">Subtotal Calculado</span>
+                    <p id="scalePriceCalc" class="total-value">COP 0</p>
+                </div>
+
+                <button class="btn btn-primary btn-full scale-confirm-btn" onclick="confirmScaleWeight()">
+                    <span class="material-icons-round">add_shopping_cart</span>
+                    Confirmar y Agregar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Editor de Factura -->
+    <div id="invoiceEditorModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Personalizar Factura</h2>
+                <button class="btn-icon" onclick="closeInvoiceEditor()">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nombre del Negocio</label>
+                    <input type="text" id="cfgBusinessName" placeholder="PawStore S.A.S">
+                </div>
+                <div class="form-group">
+                    <label>NIT / RUT</label>
+                    <input type="text" id="cfgBusinessNid" placeholder="900.000.000-1">
+                </div>
+                <div class="form-group">
+                    <label>Dirección</label>
+                    <input type="text" id="cfgBusinessAddress" placeholder="Calle Falsa 123">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" id="cfgBusinessPhone" placeholder="300 123 4567">
+                </div>
+                <div class="form-group">
+                    <label>Eslogan / Pie de Pagina</label>
+                    <textarea id="cfgBusinessFooter" placeholder="¡Gracias por cuidar a tu mejor amigo!"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeInvoiceEditor()">Cancelar</button>
+                    <button class="btn btn-primary" onclick="saveInvoiceConfig()">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" style="display:none;">
+        <span class="material-icons-round" id="toastIcon">check_circle</span>
+        <span id="toastMsg"></span>
+    </div>
+
+    <!-- INVOICE PRINT TEMPLATE (Hidden from UI) -->
+    <div id="printInvoice" class="print-invoice">
+        <!-- The content will be dynamically generated by JS -->
+    </div>
+
+    <script src="app.js?v=1.2"></script>
+    <script>
+    // ── Mordev POS: PWA Service Worker + Badge de Licencia ──────────────────
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+
+    async function checkLicenseBadge() {
+        const badge = document.getElementById('licenseBadge');
+        const badgeText = document.getElementById('licenseBadgeText');
+        if (!badge) return;
+        try {
+            const res = await fetch('/api/licencia/estado');
+            if (!res.ok) throw new Error('Error en servidor');
+            const data = await res.json();
+            
+            // Si no hay sesión, ocultamos el badge (es normal)
+            if (data.error === 'Sin sesión') {
+                badge.style.display = 'none';
+                return;
+            }
+
+            badge.style.display = 'flex';
+            if (data.activa) {
+                const dias = data.dias_restantes;
+                const color = dias > 7 ? '#00e096' : dias > 2 ? '#ffb300' : '#ff4d6d';
+                const icon = dias > 7 ? 'verified' : 'warning';
+                badge.style.borderColor = color + '44';
+                badge.style.background = color + '11';
+                badge.querySelector('.material-icons-round').style.color = color;
+                badge.querySelector('.material-icons-round').textContent = icon;
+                badgeText.textContent = dias > 0
+                    ? `Licencia activa · ${dias} día${dias !== 1 ? 's' : ''}`
+                    : `Vence hoy`;
+                badgeText.style.color = color;
+            } else {
+                badge.style.borderColor = '#ff4d6d44';
+                badge.style.background = '#ff4d6d11';
+                badge.querySelector('.material-icons-round').style.color = '#ff4d6d';
+                badge.querySelector('.material-icons-round').textContent = 'lock';
+                badgeText.textContent = data.error || 'Licencia vencida';
+                badgeText.style.color = '#ff4d6d';
+            }
+        } catch (e) {
+            console.error('Error de licencia:', e);
+            badge.style.display = 'flex';
+            badgeText.textContent = 'Sin conexión';
+        }
+    }
+
+    // Verificar al cargar la página y cada 6 horas
+    window.addEventListener('load', checkLicenseBadge);
+    setInterval(checkLicenseBadge, 6 * 60 * 60 * 1000);
+    </script>
+</body>
+
+</html>

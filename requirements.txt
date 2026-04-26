@@ -1,0 +1,11 @@
+flask
+flask-cors
+python-dotenv
+requests
+mercadopago
+supabase
+gunicorn
+pandas
+openpyxl
+flask-session
+python-multipart

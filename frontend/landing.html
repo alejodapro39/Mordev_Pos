@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mordev POS | El sistema de ventas para tu negocio</title>
+    <link rel="icon" type="image/x-icon" href="static/ico.ico">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --accent: #00f2fe;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(30, 41, 59, 0.7);
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+        }
+
+        /* --- Background Decoration --- */
+        .bg-glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(50px);
+        }
+
+        /* --- Header --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .logo i {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s transform;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            padding: 180px 5% 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: var(--gradient);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin-bottom: 40px;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+        }
+
+        /* --- Floating UI Mockup --- */
+        .mockup-container {
+            margin-top: 60px;
+            width: 100%;
+            max-width: 1000px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mockup-header {
+            height: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ff5f56;
+        }
+
+        .dot:nth-child(2) {
+            background: #ffbd2e;
+        }
+
+        .dot:nth-child(3) {
+            background: #27c93f;
+        }
+
+        .mockup-content {
+            height: 400px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- Features --- */
+        .features {
+            padding: 100px 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .f-card {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s;
+        }
+
+        .f-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+        }
+
+        .f-card i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: var(--gradient);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .f-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .f-card p {
+            color: var(--text-dim);
+        }
+
+        /* --- Pricing --- */
+        .pricing {
+            padding: 100px 5%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(59, 130, 246, 0.03);
+        }
+
+        .pricing h2 {
+            font-size: 3rem;
+            margin-bottom: 50px;
+        }
+
+        .p-card {
+            background: var(--bg-card);
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            border: 2px solid var(--primary);
+            position: relative;
+            max-width: 400px;
+        }
+
+        .p-card::before {
+            content: 'MÁS POPULAR';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        .price {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 20px 0;
+        }
+
+        .price span {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+        }
+
+        .p-list {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 40px;
+        }
+
+        .p-list li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .p-list i {
+            color: #27c93f;
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 60px 5%;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-dim);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-glow" style="top: -100px; right: -100px;"></div>
+    <div class="bg-glow" style="bottom: 100px; left: -100px;"></div>
+
+    <header>
+        <a href="#" class="logo">
+            <i class="material-icons-round">rocket_launch</i>
+            Mordev POS
+        </a>
+        <div class="nav-links">
+            <a href="#features">Características</a>
+            <a href="#pricing">Precios</a>
+            <a href="/pos" class="btn btn-outline">Iniciar Sesión</a>
+            <a href="/register" class="btn btn-primary">Empezar Gratis</a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Vende más rápido,<br>gestiona mejor.</h1>
+        <p>El punto de venta moderno que integra inventarios, báscula electrónica y pagos automáticos en un solo lugar.
+        </p>
+        <div class="hero-btns">
+            <a href="/register" class="btn btn-primary">
+                Crear mi cuenta gratis
+                <i class="material-icons-round">arrow_forward</i>
+            </a>
+            <a href="#features" class="btn btn-outline">Ver funciones</a>
+        </div>
+
+        <div class="mockup-container">
+            <div class="mockup-header">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <div class="mockup-content">
+                <i class="material-icons-round" style="font-size: 10rem; color: rgba(255,255,255,0.05);">dashboard</i>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="f-card">
+            <i class="material-icons-round">inventory_2</i>
+            <h3>Inventario Inteligente</h3>
+            <p>Control de stock en tiempo real con alertas de bajo inventario y reportes automáticos.</p>
+        </div>
+        <div class="f-card">
+            <i class="material-icons-round">monitor_weight</i>
+            <h3>Báscula Integrada</h3>
+            <p>Conecta tu báscula electrónica y pesa tus productos directamente en la pantalla de venta.</p>
+        </div>
+        <div class="f-card">
+            <i class="material-icons-round">payments</i>
+            <h3>Pagos Automáticos</h3>
+            <p>Suscripciones integradas con Mercado Pago para que tu negocio nunca se detenga.</p>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <h2>Un plan simple para todos</h2>
+        <div class="p-card">
+            <h3>Plan Premium SaaS</h3>
+            <div class="price">$25,000<span>/mes</span></div>
+            <ul class="p-list">
+                <li><i class="material-icons-round">check_circle</i> Usuarios ilimitados</li>
+                <li><i class="material-icons-round">check_circle</i> Inventario ilimitado</li>
+                <li><i class="material-icons-round">check_circle</i> Soporte para báscula</li>
+                <li><i class="material-icons-round">check_circle</i> Backup en la nube (Supabase)</li>
+                <li><i class="material-icons-round">check_circle</i> Actualizaciones constantes</li>
+            </ul>
+            <a href="/register" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                Adquirir Suscripción
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Mordev POS. Todos los derechos reservados.</p>
+        <p style="font-size: 0.8rem; margin-top: 10px;">Diseñado para el futuro del comercio.</p>
+    </footer>
+
+    <script>
+        // Animaciones simples al hacer scroll
+        const cards = document.querySelectorAll('.f-card');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        cards.forEach(card => {
+            card.style.opacity = 0;
+            card.style.transform = 'translateY(50px)';
+            card.style.transition = '0.6s ease-out';
+            observer.observe(card);
+        });
+    </script>
+</body>
+
+</html>
