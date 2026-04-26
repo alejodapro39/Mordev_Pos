@@ -18,9 +18,6 @@ import io
 from flask import send_file
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
-from docx import Document
-from docx.shared import Inches, Pt
-import fitz  # PyMuPDF
 from datetime import datetime, timedelta
 
 import sys
@@ -657,128 +654,6 @@ def remove_draft(draft_id):
     return jsonify(result)
 
 
-@app.route('/api/invoices/<int:invoice_id>/pdf', methods=['GET'])
-@login_required
-def get_invoice_pdf(invoice_id):
-    invoice = database.get_invoice_details(session.get('business_id'), invoice_id)
-    if not invoice:
-        return jsonify({"error": "Factura no encontrada"}), 404
-
-    # Buscar el template en múltiples ubicaciones posibles
-    _script_dir = get_external_data_path()  # backend/
-    _candidate_paths = [
-        os.path.join(get_base_path(), "formato_factura.pdf"),                          # grocery-app/
-        os.path.join(_script_dir, "formato_factura.pdf"),                              # backend/
-        os.path.join(_script_dir, "..", "formato_factura.pdf"),                        # grocery-app/
-        os.path.join(_script_dir, "..", "..", "formato_factura.pdf"),                  # PRUEBAS_PERSO/PRUEBAS_PERSO/
-        r"c:\Users\david.pena_cabify\Documents\PRUEBAS_PERSO\PRUEBAS_PERSO\formato_factura.pdf",
-    ]
-    template_path = next((p for p in _candidate_paths if os.path.exists(p)), None)
-    if not template_path:
-        return jsonify({"error": "No se encontró el archivo formato_factura.pdf"}), 500
-
-    try:
-        from datetime import datetime
-        doc = fitz.open(template_path)
-        page = doc[0]
-
-        # --- COORDINADAS EXACTAS SINCRONIZADAS ---
-        # Basadas en ajustar_factura.py con desplazamiento aplicado
-        COORD_ORIGINAL = {
-            "nombre": (50.0, 134.0), "direccion": (60.0, 144.2), "telefono": (60.0, 154.6),
-            "X contado": (130.0, 169.6), "X electronico": (205.0, 169.6), "X credito": (252.0, 169.6),
-            "serial": (470.0, 144.2), "dia": (410.0, 166.6), "mes": (465.0, 166.6), "año": (530.0, 166.6),
-            "nit": (290.0, 132.6), "vehiculo": (290.0, 154.6), "placa": (290.0, 171.6),
-            "subtotal": (470.0, 359.6), "abonos": (470.0, 369.6), "saldo": (470.0, 379.6)
-        }
-        
-        # Delta para la copia inferior
-        delta_y = 383.0 # Diferencia vertical entre anclajes (515.0 - 132.0)
-
-        def draw_invoice_data(page, inv, offset_y=0):
-            # Info Cliente
-            page.insert_text((COORD_ORIGINAL["nombre"][0], COORD_ORIGINAL["nombre"][1] + offset_y), str(inv.get("customer_name", "")), fontsize=9)
-            page.insert_text((COORD_ORIGINAL["direccion"][0], COORD_ORIGINAL["direccion"][1] + offset_y), str(inv.get("customer_address", "")), fontsize=9)
-            page.insert_text((COORD_ORIGINAL["telefono"][0], COORD_ORIGINAL["telefono"][1] + offset_y), str(inv.get("customer_phone", "")), fontsize=9)
-            
-            # Datos adicionales
-            page.insert_text((COORD_ORIGINAL["nit"][0], COORD_ORIGINAL["nit"][1] + offset_y), str(inv.get("customer_nid") or ""), fontsize=9)
-            page.insert_text((COORD_ORIGINAL["vehiculo"][0], COORD_ORIGINAL["vehiculo"][1] + offset_y), str(inv.get("customer_vehiculo") or ""), fontsize=9)
-            page.insert_text((COORD_ORIGINAL["placa"][0], COORD_ORIGINAL["placa"][1] + offset_y), str(inv.get("customer_placa") or ""), fontsize=9)
-            
-            # Formas de Pago
-            method = inv.get("payment_method", "Contado")
-            if method == "Contado":
-                page.insert_text((COORD_ORIGINAL["X contado"][0], COORD_ORIGINAL["X contado"][1] + offset_y), "X", fontsize=10)
-            elif "Electronico" in method or "Electrónico" in method:
-                page.insert_text((COORD_ORIGINAL["X electronico"][0], COORD_ORIGINAL["X electronico"][1] + offset_y), "X", fontsize=10)
-            elif method == "Crédito":
-                page.insert_text((COORD_ORIGINAL["X credito"][0], COORD_ORIGINAL["X credito"][1] + offset_y), "X", fontsize=10)
-            
-            # Serial y Fecha
-            page.insert_text((COORD_ORIGINAL["serial"][0], COORD_ORIGINAL["serial"][1] + offset_y), str(inv.get("id", "")).zfill(4), fontsize=10)
-            
-            invoice_date = inv.get("date", "")
-            try: dt = datetime.fromisoformat(invoice_date.replace("Z", "+00:00"))
-            except: dt = datetime.now()
-            
-            page.insert_text((COORD_ORIGINAL["dia"][0], COORD_ORIGINAL["dia"][1] + offset_y), str(dt.day).zfill(2), fontsize=9)
-            page.insert_text((COORD_ORIGINAL["mes"][0], COORD_ORIGINAL["mes"][1] + offset_y), str(dt.month).zfill(2), fontsize=9)
-            page.insert_text((COORD_ORIGINAL["año"][0], COORD_ORIGINAL["año"][1] + offset_y), str(dt.year), fontsize=9)
-
-            # Tabla de Productos (Fila 1 a 15)
-            # Y inicial corregido: 198.6
-            items = inv.get("items", [])
-            for i, item in enumerate(items[:15]):
-                curr_y = 200.6 + (i * 9.5) + offset_y
-                ref = item.get("product_reference", "") or ""
-                desc = item.get("product_name", "")
-                if ref:
-                    desc = f"{desc} - {ref}"
-                page.insert_text((22.0, curr_y), str(item.get("quantity", "")), fontsize=8)
-                page.insert_text((85.0, curr_y), desc[:45], fontsize=8)
-                page.insert_text((347.0, curr_y), f"{item.get('unit_price', 0):,.0f}", fontsize=8)
-                page.insert_text((470.0, curr_y), f"{item.get('total', 0):,.0f}", fontsize=8)
-
-        # Dibujar ambas copias
-        draw_invoice_data(page, invoice, offset_y=0)        # Superior (Original)
-
-        # Totales (Original: +8 puntos extra, Copia: posición normal)
-        # Original
-        page.insert_text((COORD_ORIGINAL["subtotal"][0], COORD_ORIGINAL["subtotal"][1] + 8), f"{invoice.get('total', 0):,.0f}", fontsize=9)
-        page.insert_text((COORD_ORIGINAL["abonos"][0], COORD_ORIGINAL["abonos"][1] + 8), f"{invoice.get('abonos', 0) or 0:,.0f}", fontsize=9)
-        page.insert_text((COORD_ORIGINAL["saldo"][0], COORD_ORIGINAL["saldo"][1] + 8), f"{invoice.get('saldo', 0) or 0:,.0f}", fontsize=9)
-        
-        # Copia Inferior
-        page.insert_text((COORD_ORIGINAL["subtotal"][0], COORD_ORIGINAL["subtotal"][1] + delta_y), f"{invoice.get('total', 0):,.0f}", fontsize=9)
-        page.insert_text((COORD_ORIGINAL["abonos"][0], COORD_ORIGINAL["abonos"][1] + delta_y), f"{invoice.get('abonos', 0) or 0:,.0f}", fontsize=9)
-        page.insert_text((COORD_ORIGINAL["saldo"][0], COORD_ORIGINAL["saldo"][1] + delta_y), f"{invoice.get('saldo', 0) or 0:,.0f}", fontsize=9)
-
-        # Copia Inferior (Offset original + desplazamiento deseado)
-        draw_invoice_data(page, invoice, offset_y=delta_y)
-
-        # Exportar PDF
-        pdf_bytes = doc.write()
-        doc.close()
-
-        # GUARDAR UNA COPIA EN DISCO (Requerimiento del usuario)
-        save_dir = os.path.join(get_external_data_path(), "facturas_guardadas")
-        os.makedirs(save_dir, exist_ok=True)
-        pdf_filename = f"factura_{str(invoice_id).zfill(4)}.pdf"
-        with open(os.path.join(save_dir, pdf_filename), "wb") as f:
-            f.write(pdf_bytes)
-        
-        return send_file(
-            io.BytesIO(pdf_bytes),
-            mimetype="application/pdf",
-            as_attachment=False,
-            download_name=pdf_filename
-        )
-    except Exception as e:
-        import traceback
-        print(traceback.format_exc())
-        return jsonify({"error": f"Error al generar PDF: {str(e)}"}), 500
-
 
 @app.route('/api/reports/sales', methods=['GET'])
 @admin_required
@@ -846,57 +721,6 @@ def export_sales_report():
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             as_attachment=True,
             download_name=f'reporte_ventas_{start_date}_a_{end_date}.xlsx'
-        )
-
-    elif report_format == 'word':
-        document = Document()
-        document.add_heading('Reporte de Ventas', 0)
-        document.add_paragraph(f'Período: {start_date} al {end_date}')
-
-        table = document.add_table(rows=1, cols=9)
-        table.style = 'Table Grid'
-        hdr_cells = table.rows[0].cells
-        hdr_cells[0].text = 'ID'
-        hdr_cells[1].text = 'Producto'
-        hdr_cells[2].text = 'Cant.'
-        hdr_cells[3].text = 'P. Unit'
-        hdr_cells[4].text = 'P. Coste'
-        hdr_cells[5].text = 'Total Venta'
-        hdr_cells[6].text = 'Total Coste'
-        hdr_cells[7].text = 'Ganancia'
-        hdr_cells[8].text = 'Fecha'
-
-        total_venta = 0
-        total_coste = 0
-        for s in sales:
-            coste_total = (s.get('purchase_unit_price') or 0) * s['quantity']
-            ganancia = s['total'] - coste_total
-            row_cells = table.add_row().cells
-            row_cells[0].text = str(s['id'])
-            row_cells[1].text = s['product_name']
-            row_cells[2].text = str(s['quantity'])
-            row_cells[3].text = f"{s['unit_price']:,.0f}"
-            row_cells[4].text = f"{s.get('purchase_unit_price') or 0:,.0f}"
-            row_cells[5].text = f"{s['total']:,.0f}"
-            row_cells[6].text = f"{coste_total:,.0f}"
-            row_cells[7].text = f"{ganancia:,.0f}"
-            row_cells[8].text = s['date'][:16]
-            total_venta += s['total']
-            total_coste += coste_total
-
-        document.add_paragraph(f'\nTOTAL VENTAS: COP {total_venta:,.0f}')
-        document.add_paragraph(f'TOTAL COSTE: COP {total_coste:,.0f}')
-        document.add_paragraph(f'GANANCIA TOTAL: COP {total_venta - total_coste:,.0f}', style='Subtitle')
-
-        f = io.BytesIO()
-        document.save(f)
-        f.seek(0)
-        
-        return send_file(
-            f,
-            mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            as_attachment=True,
-            download_name=f'reporte_ventas_{start_date}_a_{end_date}.docx'
         )
 
     return jsonify({"error": "Formato no soportado"}), 400

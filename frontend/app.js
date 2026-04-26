@@ -94,7 +94,7 @@ async function handleLogout() {
 
 async function checkSession() {
     // Primero verificar bloqueo del sistema
-    
+
     try {
         const data = await api('/api/me');
         currentUser = data;
@@ -128,7 +128,7 @@ function showApp() {
         const lic = currentUser.license;
         const badge = document.getElementById('licenseBadgeText');
         const badgeIcon = document.getElementById('licenseBadge').querySelector('.material-icons-round');
-        
+
         if (!lic.activa) {
             badge.textContent = "Licencia Vencida";
             badge.style.color = "#ff4444";
@@ -158,14 +158,14 @@ function showApp() {
         el.style.display = currentUser.role === 'admin' ? '' : 'none';
     });
 
-    switchView('dashboard');
-    
+    switchView('sales');
+
     // PawStore: Init Hardware & Config
     initBarcodeScanner();
     loadInvoiceConfig();
     if (currentUser.role === 'admin') {
         refreshScalePorts();
-            }
+    }
 }
 
 // ===========================
@@ -364,18 +364,18 @@ function showProductModal(product = null) {
 function setProductType(type) {
     const isBulk = type === 'bulk';
     document.getElementById('productIsBulk').checked = isBulk;
-    
+
     // Toggle buttons
     document.getElementById('btnTypeBulk').classList.toggle('active', isBulk);
     document.getElementById('btnTypeStock').classList.toggle('active', !isBulk);
-    
+
     // Hide/Show extra fields
     document.getElementById('extraFieldsStock').style.display = isBulk ? 'none' : 'block';
-    
+
     // Update Labels
     const saleLabel = document.getElementById('lblProductSalePrice');
     const stockLabel = document.getElementById('lblProductStock');
-    
+
     if (isBulk) {
         saleLabel.innerHTML = '<span class="material-icons-round">payments</span> P. Venta (POR KILO)';
         stockLabel.innerHTML = '<span class="material-icons-round">inventory</span> Cuántos Kilos hay';
@@ -716,7 +716,7 @@ async function completeSale() {
 
     const btn = document.getElementById('completeSaleBtn');
     if (!btn) return;
-    
+
     btn.disabled = true;
     btn.innerHTML = '<span class="material-icons-round">hourglass_top</span> Procesando...';
 
@@ -754,7 +754,7 @@ async function completeSale() {
         });
 
         showToast('Venta realizada con éxito');
-        
+
         // Print HTML invoice
         printHTMLInvoice(result.invoice_id);
 
@@ -763,11 +763,11 @@ async function completeSale() {
         currentDraftId = null;
         renderCart();
         loadSaleProducts();
-        
+
         // Reset customer info
         if (document.getElementById('customerNid')) {
             document.getElementById('customerNid').value = '';
-            searchCustomerByNid(); 
+            searchCustomerByNid();
         }
 
     } catch (err) {
@@ -896,7 +896,7 @@ async function loadHistory() {
 
         tbody.innerHTML = groups.map(g => {
             const rowCount = g.items.length;
-            
+
             return g.items.map((item, i) => {
                 const ref = item.product_reference ? ` <span style="color:var(--text-muted);font-size:0.8em;">— ${escapeHtml(item.product_reference)}</span>` : '';
                 const deleteBtn = isAdmin ? `
@@ -1084,7 +1084,7 @@ async function saveAsDraft() {
 async function openDraft(id) {
     try {
         const draft = await api(`/api/drafts/${id}`);
-        
+
         // Load cart
         cart = draft.items.map(item => ({
             product_id: item.product_id,
@@ -1108,7 +1108,7 @@ async function openDraft(id) {
         document.getElementById('customerAddress').value = draft.customer_address || '';
         document.getElementById('customerPhone').value = draft.customer_phone || '';
 
-        
+
         // Load payment method
         const payMethod = draft.payment_method || 'Contado';
         document.getElementById('salePaymentMethod').value = payMethod;
@@ -1117,10 +1117,10 @@ async function openDraft(id) {
         });
 
         currentDraftId = draft.id;
-        
+
         // Switch to sales view
         switchView('sales');
-        
+
         showToast('Borrador cargado');
     } catch (err) {
         showToast(err.message, 'error');
@@ -1404,13 +1404,13 @@ function handleGenerateReport(event) {
 function initBarcodeScanner() {
     const hiddenInput = document.getElementById('barcodeScannerCapture');
     if (!hiddenInput) return;
-    
+
     // Mantener foco en el input invisible siempre que no haya modales abiertos
     // y el usuario no esté enfocado en otro campo de entrada
     document.addEventListener('click', (e) => {
         const isFocusable = ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName);
         const isInModal = !!document.querySelector('.modal[style*="flex"]');
-        
+
         if (!isFocusable && !isInModal) {
             hiddenInput.focus();
         }
@@ -1419,7 +1419,7 @@ function initBarcodeScanner() {
     hiddenInput.addEventListener('keydown', (e) => {
         const currentTime = Date.now();
         if (currentTime - lastKeyTime > 100) {
-            barcodeBuffer = ""; 
+            barcodeBuffer = "";
         }
         lastKeyTime = currentTime;
 
@@ -1470,7 +1470,7 @@ function openScaleModal(product) {
     document.getElementById('manualWeight').value = "";
     document.getElementById('scalePriceCalc').textContent = formatPrice(0);
     document.getElementById('scaleModal').style.display = 'flex';
-    
+
     startScalePolling();
 }
 
@@ -1489,7 +1489,7 @@ function startScalePolling() {
                 document.getElementById('scaleWeight').textContent = weight.toFixed(3);
                 updateScalePrice(weight);
             }
-        } catch (e) {}
+        } catch (e) { }
     }, 500);
 }
 
@@ -1513,14 +1513,14 @@ if (manualWeightInput) {
         const weight = parseFloat(e.target.value) || 0;
         document.getElementById('scaleWeight').textContent = weight.toFixed(3);
         updateScalePrice(weight);
-        if (weight > 0) stopScalePolling(); 
+        if (weight > 0) stopScalePolling();
     });
 }
 
 function confirmScaleWeight() {
     const weightText = document.getElementById('scaleWeight').textContent;
     const weight = parseFloat(weightText);
-    
+
     if (weight <= 0) {
         showToast('El peso debe ser mayor a cero', 'error');
         return;
@@ -1544,7 +1544,7 @@ async function refreshScalePorts() {
             opt.textContent = `${p.port} (${p.description})`;
             select.appendChild(opt);
         });
-        
+
         const config = await api('/api/scale/config');
         if (config.port) select.value = config.port;
         document.getElementById('scaleBaudrateSelect').value = config.baudrate || '9600';
@@ -1607,7 +1607,7 @@ async function printHTMLInvoice(invoiceId) {
     try {
         const inv = await api(`/api/invoices/${invoiceId}`);
         const printArea = document.getElementById('printInvoice');
-        
+
         const date = formatDate(inv.date);
         const itemsHtml = inv.items.map(item => `
             <tr>
@@ -1693,10 +1693,10 @@ async function loadSettings() {
     try {
         const res = await fetch('/api/licencia/estado');
         const data = await res.json();
-        
+
         const diasRestantesEl = document.getElementById('subsDiasRestantes');
         const vencimientoEl = document.getElementById('subsVencimiento');
-        
+
         if (diasRestantesEl) diasRestantesEl.textContent = data.dias_restantes;
         if (vencimientoEl) {
             if (data.fecha_vencimiento) {
@@ -1706,7 +1706,7 @@ async function loadSettings() {
                 vencimientoEl.textContent = 'Indefinido';
             }
         }
-        
+
         // Cargar puertos escala si existe la función
         if (typeof refreshScalePorts === 'function') refreshScalePorts();
     } catch (e) {
@@ -1717,18 +1717,18 @@ async function loadSettings() {
 async function createSubscriptionPreference() {
     try {
         showToast('Generando link de pago...', 'info');
-        
-        const res = await fetch('/api/create-preference', { 
+
+        const res = await fetch('/api/create-preference', {
             method: 'POST'
         });
-        
+
         const data = await res.json();
-        
+
         if (data.error) {
             showToast(data.error, 'error');
             return;
         }
-        
+
         if (data.init_point) {
             showToast('Redirigiendo a Mercado Pago...', 'success');
             window.location.href = data.init_point;

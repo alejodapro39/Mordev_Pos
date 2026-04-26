@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Registro — Mordev POS</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
         .register-screen {
@@ -98,19 +101,19 @@
             position: absolute;
             width: 600px;
             height: 600px;
-            background: radial-gradient(circle, rgba(0, 200, 255, 0.15) 0%, rgba(0,0,0,0) 70%);
+            background: radial-gradient(circle, rgba(0, 200, 255, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
             top: -200px;
             right: -200px;
             border-radius: 50%;
             z-index: 1;
             pointer-events: none;
         }
-        
+
         .ambient-glow-2 {
             position: absolute;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(150, 0, 255, 0.1) 0%, rgba(0,0,0,0) 70%);
+            background: radial-gradient(circle, rgba(150, 0, 255, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
             bottom: -200px;
             left: -150px;
             border-radius: 50%;
@@ -131,10 +134,11 @@
         }
     </style>
 </head>
+
 <body>
     <div class="ambient-glow"></div>
     <div class="ambient-glow-2"></div>
-    
+
     <!-- Toast Notification (Reused from index.html) -->
     <div class="toast" id="toast" style="display:none; position:fixed; top:20px; right:20px; z-index:9999;">
         <span class="material-icons-round" id="toastIcon">info</span>
@@ -167,11 +171,12 @@
                         <span class="material-icons-round">rocket_launch</span>
                         Comenzar Ahora
                     </button>
-                    <p id="registerError" class="error-msg" style="display:none; text-align:center; margin-top:15px;"></p>
+                    <p id="registerError" class="error-msg" style="display:none; text-align:center; margin-top:15px;">
+                    </p>
                 </form>
-                
+
                 <div class="login-link">
-                    ¿Ya tienes una cuenta? <a href="/">Inicia Sesión</a>
+                    ¿Ya tienes una cuenta? <a href="/pos">Inicia Sesión</a>
                 </div>
             </div>
 
@@ -179,8 +184,9 @@
             <div id="successState" class="success-state">
                 <span class="material-icons-round">check_circle</span>
                 <h2 style="color:var(--text-light); margin-bottom:10px;">¡Cuenta Creada!</h2>
-                <p style="color:var(--text-muted); margin-bottom:25px;">Tu licencia de 30 días ha sido activada correctamente.</p>
-                <a href="/" class="btn btn-primary" style="display:inline-flex; text-decoration:none;">
+                <p style="color:var(--text-muted); margin-bottom:25px;">Tu licencia de 30 días ha sido activada
+                    correctamente.</p>
+                <a href="/pos" class="btn btn-primary" style="display:inline-flex; text-decoration:none;">
                     Ir a Iniciar Sesión
                 </a>
             </div>
@@ -212,10 +218,10 @@
 
         async function handleRegister(event) {
             event.preventDefault();
-            
+
             const btn = document.getElementById('btnRegister');
             const errorEl = document.getElementById('registerError');
-            
+
             const nombre_negocio = document.getElementById('regBusinessName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const password = document.getElementById('regPassword').value;
@@ -247,9 +253,10 @@
                 btn.disabled = false;
                 btn.innerHTML = '<span class="material-icons-round">rocket_launch</span> Comenzar Ahora';
             }
-            
+
             return false;
         }
     </script>
 </body>
+
 </html>

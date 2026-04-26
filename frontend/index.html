@@ -15,7 +15,8 @@
     <link rel="icon" type="image/x-icon" href="/static/ico.ico">
     <link rel="apple-touch-icon" href="/static/ico.ico">
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -50,7 +51,8 @@
                 <p id="loginError" class="error-msg" style="display:none;"></p>
             </form>
             <div style="text-align: center; margin-top: 25px; color: var(--text-muted); font-size: 14px;">
-                ¿No tienes una cuenta? <a href="/register" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Regístrate</a>
+                ¿No tienes una cuenta? <a href="/register"
+                    style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Regístrate</a>
             </div>
         </div>
     </div>
@@ -94,7 +96,8 @@
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="sidebar-header">
-                <img src="/static/ico.ico" alt="M" style="width:28px;height:28px;border-radius:6px;object-fit:cover;" onerror="this.style.display='none'">
+                <img src="/static/ico.ico" alt="M" style="width:28px;height:28px;border-radius:6px;object-fit:cover;"
+                    onerror="this.style.display='none'">
                 <h2>Mordev POS</h2>
             </div>
             <!-- Badge estado de licencia -->
@@ -254,7 +257,8 @@
                             <input type="text" id="productSearch" placeholder="Buscar producto..."
                                 oninput="filterProducts()">
                         </div>
-                        <button class="btn btn-secondary admin-only" onclick="exportInventoryExcel()" title="Descargar inventario en Excel">
+                        <button class="btn btn-secondary admin-only" onclick="exportInventoryExcel()"
+                            title="Descargar inventario en Excel">
                             <span class="material-icons-round">download</span>
                             Exportar Excel
                         </button>
@@ -594,7 +598,6 @@
                                 <label>Formato de Exportación</label>
                                 <select id="reportFormat">
                                     <option value="excel">Microsoft Excel (.xlsx)</option>
-                                    <option value="word">Microsoft Word (.docx)</option>
                                 </select>
                             </div>
 
@@ -651,8 +654,10 @@
                         </div>
                         <div class="card-body">
                             <div style="margin-bottom: 15px;">
-                                <p style="font-size: 14px; margin-bottom: 5px;">Días restantes: <strong id="subsDiasRestantes">--</strong></p>
-                                <p style="font-size: 12px; color: var(--text-secondary);">Vence: <span id="subsVencimiento">--/--/----</span></p>
+                                <p style="font-size: 14px; margin-bottom: 5px;">Días restantes: <strong
+                                        id="subsDiasRestantes">--</strong></p>
+                                <p style="font-size: 12px; color: var(--text-secondary);">Vence: <span
+                                        id="subsVencimiento">--/--/----</span></p>
                             </div>
                             <button class="btn btn-primary btn-full" onclick="createSubscriptionPreference()">
                                 <span class="material-icons-round">payment</span>
@@ -711,7 +716,7 @@
             </div>
             <form id="productForm" onsubmit="return saveProduct(event)">
                 <input type="hidden" id="productId">
-                
+
                 <!-- Product Type Selector -->
                 <div class="product-type-selector">
                     <button type="button" id="btnTypeStock" class="type-btn active" onclick="setProductType('stock')">
@@ -727,10 +732,12 @@
 
                 <!-- Image (small, centered) -->
                 <div class="product-img-top">
-                    <div class="image-upload-zone-top" id="productImageZone" onclick="document.getElementById('productImageInput').click()">
+                    <div class="image-upload-zone-top" id="productImageZone"
+                        onclick="document.getElementById('productImageInput').click()">
                         <div class="image-preview" id="productImagePreview" style="display:none;">
                             <img id="productImagePreviewImg" src="" alt="Preview">
-                            <button type="button" class="image-remove-btn" onclick="event.stopPropagation(); removeProductImage()">
+                            <button type="button" class="image-remove-btn"
+                                onclick="event.stopPropagation(); removeProductImage()">
                                 <span class="material-icons-round">close</span>
                             </button>
                         </div>
@@ -738,24 +745,28 @@
                             <span class="material-icons-round">add_a_photo</span>
                             <p>Foto del producto</p>
                         </div>
-                        <input type="file" id="productImageInput" accept="image/*" style="display:none" onchange="previewProductImage(event)">
+                        <input type="file" id="productImageInput" accept="image/*" style="display:none"
+                            onchange="previewProductImage(event)">
                     </div>
                 </div>
 
                 <!-- Name (always visible) -->
                 <div class="form-group">
-                    <label class="field-label-amigable"><span class="material-icons-round">label</span> Nombre del Producto</label>
+                    <label class="field-label-amigable"><span class="material-icons-round">label</span> Nombre del
+                        Producto</label>
                     <input type="text" id="productName" placeholder="Ejem: Chunky Adultos" required>
                 </div>
 
                 <!-- Price & Stock -->
                 <div class="form-row-2">
                     <div class="form-group">
-                        <label id="lblProductSalePrice" class="field-label-amigable"><span class="material-icons-round">payments</span> P. Venta (COP)</label>
+                        <label id="lblProductSalePrice" class="field-label-amigable"><span
+                                class="material-icons-round">payments</span> P. Venta (COP)</label>
                         <input type="number" id="productSalePrice" step="0.01" min="0" placeholder="0.00" required>
                     </div>
                     <div class="form-group">
-                        <label id="lblProductStock" class="field-label-amigable"><span class="material-icons-round">inventory</span> Cuánto hay</label>
+                        <label id="lblProductStock" class="field-label-amigable"><span
+                                class="material-icons-round">inventory</span> Cuánto hay</label>
                         <input type="number" id="productStock" step="0.001" min="0" placeholder="0.00" required>
                     </div>
                 </div>
@@ -763,26 +774,31 @@
                 <!-- Extra Fields (Hidden if Bulk) -->
                 <div id="extraFieldsStock">
                     <div class="form-group">
-                        <label class="field-label-amigable"><span class="material-icons-round">category</span> Categoría</label>
+                        <label class="field-label-amigable"><span class="material-icons-round">category</span>
+                            Categoría</label>
                         <input type="text" id="productCategory" placeholder="Ejem: Alimento Perro">
                     </div>
                     <div class="form-row-2">
                         <div class="form-group">
-                            <label class="field-label-amigable"><span class="material-icons-round">tag</span> Referencia</label>
+                            <label class="field-label-amigable"><span class="material-icons-round">tag</span>
+                                Referencia</label>
                             <input type="text" id="productReference" placeholder="Opcional">
                         </div>
                         <div class="form-group">
-                            <label class="field-label-amigable"><span class="material-icons-round">straighten</span> Unidad</label>
+                            <label class="field-label-amigable"><span class="material-icons-round">straighten</span>
+                                Unidad</label>
                             <input type="text" id="productUnit" placeholder="Ejem: Galón, Bulto">
                         </div>
                     </div>
                     <div class="form-row-2">
                         <div class="form-group">
-                            <label class="field-label-amigable"><span class="material-icons-round">shopping_cart_checkout</span> P. Compra (COP)</label>
+                            <label class="field-label-amigable"><span
+                                    class="material-icons-round">shopping_cart_checkout</span> P. Compra (COP)</label>
                             <input type="number" id="productPurchasePrice" step="0.01" min="0" placeholder="Costo">
                         </div>
                         <div class="form-group">
-                            <label class="field-label-amigable"><span class="material-icons-round">barcode_reader</span> Código de Barras</label>
+                            <label class="field-label-amigable"><span class="material-icons-round">barcode_reader</span>
+                                Código de Barras</label>
                             <input type="text" id="productBarcode" placeholder="Escanear o escribir">
                         </div>
                     </div>
@@ -793,7 +809,8 @@
                     <input type="number" id="productPrice">
                 </div>
                 <div class="modal-footer-amigable">
-                    <button type="button" class="btn btn-secondary btn-outline" onclick="closeProductModal()">Cancelar</button>
+                    <button type="button" class="btn btn-secondary btn-outline"
+                        onclick="closeProductModal()">Cancelar</button>
                     <button type="submit" class="btn btn-primary btn-save-big">
                         <span class="material-icons-round">save</span>
                         Guardar Producto
@@ -847,7 +864,7 @@
             </div>
             <div class="modal-body scale-modal-body">
                 <h3 id="scaleProductName" class="scale-product-title"></h3>
-                
+
                 <div class="scale-info-grid">
                     <div class="scale-info-item">
                         <span class="material-icons-round">payments</span>
@@ -947,57 +964,57 @@
 
     <script src="app.js?v=1.2"></script>
     <script>
-    // ── Mordev POS: PWA Service Worker + Badge de Licencia ──────────────────
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js').catch(() => {});
-    }
-
-    async function checkLicenseBadge() {
-        const badge = document.getElementById('licenseBadge');
-        const badgeText = document.getElementById('licenseBadgeText');
-        if (!badge) return;
-        try {
-            const res = await fetch('/api/licencia/estado');
-            if (!res.ok) throw new Error('Error en servidor');
-            const data = await res.json();
-            
-            // Si no hay sesión, ocultamos el badge (es normal)
-            if (data.error === 'Sin sesión') {
-                badge.style.display = 'none';
-                return;
-            }
-
-            badge.style.display = 'flex';
-            if (data.activa) {
-                const dias = data.dias_restantes;
-                const color = dias > 7 ? '#00e096' : dias > 2 ? '#ffb300' : '#ff4d6d';
-                const icon = dias > 7 ? 'verified' : 'warning';
-                badge.style.borderColor = color + '44';
-                badge.style.background = color + '11';
-                badge.querySelector('.material-icons-round').style.color = color;
-                badge.querySelector('.material-icons-round').textContent = icon;
-                badgeText.textContent = dias > 0
-                    ? `Licencia activa · ${dias} día${dias !== 1 ? 's' : ''}`
-                    : `Vence hoy`;
-                badgeText.style.color = color;
-            } else {
-                badge.style.borderColor = '#ff4d6d44';
-                badge.style.background = '#ff4d6d11';
-                badge.querySelector('.material-icons-round').style.color = '#ff4d6d';
-                badge.querySelector('.material-icons-round').textContent = 'lock';
-                badgeText.textContent = data.error || 'Licencia vencida';
-                badgeText.style.color = '#ff4d6d';
-            }
-        } catch (e) {
-            console.error('Error de licencia:', e);
-            badge.style.display = 'flex';
-            badgeText.textContent = 'Sin conexión';
+        // ── Mordev POS: PWA Service Worker + Badge de Licencia ──────────────────
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(() => { });
         }
-    }
 
-    // Verificar al cargar la página y cada 6 horas
-    window.addEventListener('load', checkLicenseBadge);
-    setInterval(checkLicenseBadge, 6 * 60 * 60 * 1000);
+        async function checkLicenseBadge() {
+            const badge = document.getElementById('licenseBadge');
+            const badgeText = document.getElementById('licenseBadgeText');
+            if (!badge) return;
+            try {
+                const res = await fetch('/api/licencia/estado');
+                if (!res.ok) throw new Error('Error en servidor');
+                const data = await res.json();
+
+                // Si no hay sesión, ocultamos el badge (es normal)
+                if (data.error === 'Sin sesión') {
+                    badge.style.display = 'none';
+                    return;
+                }
+
+                badge.style.display = 'flex';
+                if (data.activa) {
+                    const dias = data.dias_restantes;
+                    const color = dias > 7 ? '#00e096' : dias > 2 ? '#ffb300' : '#ff4d6d';
+                    const icon = dias > 7 ? 'verified' : 'warning';
+                    badge.style.borderColor = color + '44';
+                    badge.style.background = color + '11';
+                    badge.querySelector('.material-icons-round').style.color = color;
+                    badge.querySelector('.material-icons-round').textContent = icon;
+                    badgeText.textContent = dias > 0
+                        ? `Licencia activa · ${dias} día${dias !== 1 ? 's' : ''}`
+                        : `Vence hoy`;
+                    badgeText.style.color = color;
+                } else {
+                    badge.style.borderColor = '#ff4d6d44';
+                    badge.style.background = '#ff4d6d11';
+                    badge.querySelector('.material-icons-round').style.color = '#ff4d6d';
+                    badge.querySelector('.material-icons-round').textContent = 'lock';
+                    badgeText.textContent = data.error || 'Licencia vencida';
+                    badgeText.style.color = '#ff4d6d';
+                }
+            } catch (e) {
+                console.error('Error de licencia:', e);
+                badge.style.display = 'flex';
+                badgeText.textContent = 'Sin conexión';
+            }
+        }
+
+        // Verificar al cargar la página y cada 6 horas
+        window.addEventListener('load', checkLicenseBadge);
+        setInterval(checkLicenseBadge, 6 * 60 * 60 * 1000);
     </script>
 </body>
 
