@@ -11,6 +11,8 @@ from werkzeug.utils import secure_filename
 from functools import wraps
 import os
 import uuid
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import database
 import io
 from flask import send_file
