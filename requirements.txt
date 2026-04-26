@@ -9,3 +9,5 @@ pandas
 openpyxl
 flask-session
 python-multipart
+python-docx
+PyMuPDF
