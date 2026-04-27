@@ -60,8 +60,7 @@ def get_external_data_path():
     return os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__, 
-            static_folder=os.path.join(get_base_path(), 'frontend'), 
-            static_url_path='')
+            static_folder=os.path.join(get_base_path(), 'frontend'))
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'clave-secreta-ventas-app-2026')
 
 # Carpeta de templates para las pantallas de licencia
@@ -134,33 +133,38 @@ def serve_landing():
     if 'business_id' in session:
         return redirect('/pos')
     
-    print(f"[DEBUG] Static folder: {app.static_folder}")
     full_path = os.path.join(app.static_folder, 'landing.html')
-    print(f"[DEBUG] Full path to landing: {full_path}")
-    print(f"[DEBUG] File exists: {os.path.exists(full_path)}")
-    
-    return send_from_directory(app.static_folder, 'landing.html')
+    return send_file(full_path)
 
 @app.route('/pos')
 def serve_index():
-    return send_from_directory(app.static_folder, 'index.html')
+    full_path = os.path.join(app.static_folder, 'index.html')
+    return send_file(full_path)
 
 @app.route('/master')
 def serve_master():
-    return send_from_directory('../frontend', 'master.html')
+    full_path = os.path.join(app.static_folder, 'master.html')
+    return send_file(full_path)
 
 @app.route('/socio')
 def serve_socio():
     return send_from_directory('../frontend', 'socio.html')
 
+@app.route('/<path:path>')
+def serve_any_static(path):
+    """Ruta comodín para servir JS, CSS, imágenes, etc. desde la carpeta frontend."""
+    return send_from_directory(app.static_folder, path)
+
 @app.route('/register')
 def serve_register():
-    return send_from_directory(app.static_folder, 'register.html')
+    full_path = os.path.join(app.static_folder, 'register.html')
+    return send_file(full_path)
 
 @app.route('/restablecer')
 def serve_restablecer():
     """Página de restablecimiento de contraseña (recibe ?token=...)"""
-    return send_from_directory(app.static_folder, 'restablecer.html')
+    full_path = os.path.join(app.static_folder, 'restablecer.html')
+    return send_file(full_path)
 
 
 @app.route('/uploads/<filename>')

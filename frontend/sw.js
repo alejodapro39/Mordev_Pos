@@ -4,7 +4,7 @@
  * Permite uso offline básico del POS.
  */
 
-const CACHE_NAME = 'mordev-pos-v1';
+const CACHE_NAME = 'mordev-pos-v2';
 
 // Assets que se cachean en la instalación
 const STATIC_ASSETS = [
