@@ -5,7 +5,7 @@ try:
 except ImportError:
     pass  # python-dotenv no instalado, se usarán las vars del sistema
 
-from flask import Flask, request, jsonify, send_from_directory, session, render_template
+from flask import Flask, request, jsonify, send_from_directory, session, render_template, redirect, url_for
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 from functools import wraps
@@ -133,6 +133,12 @@ def serve_landing():
     # Si ya tiene sesión, lo mandamos al POS directamente
     if 'business_id' in session:
         return redirect('/pos')
+    
+    print(f"[DEBUG] Static folder: {app.static_folder}")
+    full_path = os.path.join(app.static_folder, 'landing.html')
+    print(f"[DEBUG] Full path to landing: {full_path}")
+    print(f"[DEBUG] File exists: {os.path.exists(full_path)}")
+    
     return send_from_directory(app.static_folder, 'landing.html')
 
 @app.route('/pos')
