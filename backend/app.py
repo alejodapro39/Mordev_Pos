@@ -38,9 +38,9 @@ except ImportError:
     MP_AVAILABLE = False
 
 # ===========================
-# CONTRASEÑA MAESTRA
+# CONTRASEÑA MAESTRA (Cargar desde .env por seguridad)
 # ===========================
-MASTER_PASSWORD = "Minecra32"
+MASTER_PASSWORD = os.environ.get("MASTER_PASSWORD", "Minecra32")
 
 # ── Configuración de Mercado Pago ─────────────────────────────────────────────
 MP_ACCESS_TOKEN = os.environ.get("MERCADO_PAGO_ACCESS_TOKEN", "")
