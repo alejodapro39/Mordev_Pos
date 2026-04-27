@@ -26,8 +26,8 @@ def registrar_nuevo_negocio(nombre_negocio, email, password,
     Crea un nuevo negocio (tenant), le asigna 30 días de prueba, y crea su primer usuario (admin).
     Acepta código de referido del vendedor y categoría del negocio.
     """
-    client = get_client()
     try:
+        client = get_client()
         # 1. Verificar si el email ya existe
         existing_negocio = client.table("negocios").select("id").eq("email", email).maybe_single().execute()
         if existing_negocio and hasattr(existing_negocio, 'data') and existing_negocio.data:
