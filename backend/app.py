@@ -136,16 +136,17 @@ def serve_landing():
     
     full_path = os.path.join(app.static_folder, 'landing.html')
     if os.path.exists(full_path):
-        print(f"[DEBUG] Full path: {full_path} | Size: {os.path.getsize(full_path)} bytes")
-    else:
-        print(f"[DEBUG] File NOT FOUND at: {full_path}")
-        
-    return send_file(full_path)
+        with open(full_path, 'rb') as f:
+            return f.read(), 200, {'Content-Type': 'text/html'}
+    return "Archivo no encontrado", 404
 
 @app.route('/pos')
 def serve_index():
     full_path = os.path.join(app.static_folder, 'index.html')
-    return send_file(full_path)
+    if os.path.exists(full_path):
+        with open(full_path, 'rb') as f:
+            return f.read(), 200, {'Content-Type': 'text/html'}
+    return "Archivo no encontrado", 404
 
 @app.route('/master')
 def serve_master():
@@ -167,6 +168,27 @@ def serve_restablecer():
     """Página de restablecimiento de contraseña (recibe ?token=...)"""
     full_path = os.path.join(app.static_folder, 'restablecer.html')
     return send_file(full_path)
+
+@app.route('/<path:path>')
+def serve_any_static(path):
+    """Ruta comodín para servir JS, CSS, imágenes, etc. desde la carpeta frontend."""
+    full_path = os.path.join(app.static_folder, path)
+    if os.path.exists(full_path):
+        mimetype = "text/plain"
+        if path.endswith(".js"): mimetype = "application/javascript"
+        elif path.endswith(".css"): mimetype = "text/css"
+        elif path.endswith(".png"): mimetype = "image/png"
+        elif path.endswith(".jpg") or path.endswith(".jpeg"): mimetype = "image/jpeg"
+        elif path.endswith(".ico"): mimetype = "image/x-icon"
+        elif path.endswith(".json"): mimetype = "application/json"
+        elif path.endswith(".html"): mimetype = "text/html"
+        
+        try:
+            with open(full_path, 'rb') as f:
+                return f.read(), 200, {'Content-Type': mimetype}
+        except:
+            return "Error leyendo archivo", 500
+    return "No encontrado", 404
 
 
 @app.route('/uploads/<filename>')
