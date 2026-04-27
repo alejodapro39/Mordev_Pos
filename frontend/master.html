@@ -3,135 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mordev Master Admin</title>
+    <title>Mordev Master | Developer Panel</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
-        :root { --brand-primary: #7C3AED; }
-        body { background: #0A0B0F; font-family: 'Outfit', sans-serif; color: white; padding: 40px 20px; }
-        .container { max-width: 1000px; margin: 0 auto; }
+        :root { 
+            --brand-master: #8B5CF6; 
+            --bg-master: #030407;
+            --card-master: #0F1117;
+            --border-master: rgba(139, 92, 246, 0.2);
+        }
+        body { 
+            background: var(--bg-master); 
+            font-family: 'Outfit', sans-serif; 
+            color: #E2E8F0; 
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* --- LOGIN OVERLAY --- */
+        #masterLock {
+            position: fixed; inset: 0; background: var(--bg-master); z-index: 1000;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+            backdrop-filter: blur(20px);
+        }
+        .lock-card {
+            background: var(--card-master); border: 1px solid var(--border-master);
+            padding: 40px; border-radius: 28px; width: 100%; max-width: 380px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* --- MAIN UI --- */
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .card { background: #12131A; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 24px; margin-bottom: 24px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { text-align: left; color: rgba(255,255,255,0.4); font-size: 13px; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        td { padding: 16px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
-        .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-        .status-active { background: rgba(0,224,150,0.1); color: #00E096; }
-        .status-inactive { background: rgba(255,77,109,0.1); color: #FF4D6D; }
-        .btn { border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-family: inherit; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .btn-primary { background: var(--brand-primary); color: white; }
-        .btn-sm { padding: 6px 12px; font-size: 12px; }
-        input, select { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; padding: 10px; width: 100%; margin-top: 6px; }
+        
+        .card { 
+            background: var(--card-master); 
+            border: 1px solid var(--border-master); 
+            border-radius: 24px; padding: 30px; margin-bottom: 30px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h3 { margin: 0 0 20px; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; color: #fff; }
+        
+        /* TABLE FIXES */
+        .table-wrap { overflow-x: auto; width: 100%; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        th { 
+            text-align: left; color: #94A3B8; font-size: 13px; font-weight: 600;
+            padding: 15px; border-bottom: 1px solid var(--border-master);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        td { 
+            padding: 18px 15px; border-bottom: 1px solid rgba(255,255,255,0.03); 
+            font-size: 15px; color: #CBD5E1; 
+        }
+        tr:hover td { background: rgba(139, 92, 246, 0.03); }
+
+        .status-pill { padding: 5px 12px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+        .status-active { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+        .status-inactive { background: rgba(239, 68, 68, 0.1); color: #EF4444; }
+
+        .btn { 
+            border: none; padding: 12px 24px; border-radius: 14px; cursor: pointer; 
+            font-family: inherit; font-weight: 700; display: flex; align-items: center; gap: 10px;
+            transition: all 0.2s;
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--brand-master), #6D28D9); 
+            color: white; box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(139, 92, 246, 0.4); }
+
+        input { 
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 12px; color: white; padding: 14px; width: 100%; box-sizing: border-box;
+            font-size: 15px; transition: all 0.2s;
+        }
+        input:focus { border-color: var(--brand-master); outline: none; background: rgba(255,255,255,0.05); }
+
+        .glow-text { color: var(--brand-master); text-shadow: 0 0 15px rgba(139, 92, 246, 0.5); }
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <!-- PANTALLA DE BLOQUEO -->
+    <div id="masterLock">
+        <div class="lock-card">
+            <div style="font-size: 40px; margin-bottom: 20px;">🛡️</div>
+            <h2 style="font-weight: 800; font-size: 24px; margin-bottom: 10px;">Acceso Restringido</h2>
+            <p style="color: #64748B; font-size: 14px; margin-bottom: 30px;">Solo personal de Mordev Dev Team</p>
+            <input type="password" id="masterPassInp" placeholder="Contraseña Maestra" style="text-align:center;">
+            <button class="btn btn-primary" style="width:100%; margin-top:20px;" onclick="unlock()">
+                Desbloquear Panel
+            </button>
+            <p id="lockError" style="color:#EF4444; font-size:13px; margin-top:15px; display:none;">Clave incorrecta</p>
+        </div>
+    </div>
+
+    <!-- UI PRINCIPAL -->
+    <div class="container" id="mainContent" style="display:none;">
         <div class="header">
             <div>
-                <h1 style="font-size: 32px; font-weight: 800; letter-spacing: -1px;">Mordev <span style="color:var(--brand-primary)">Master</span></h1>
-                <p style="color:rgba(255,255,255,0.5)">Gestión de Socios Comerciales y Liquidaciones</p>
+                <h1 style="font-size: 36px; font-weight: 800; letter-spacing: -1.5px; margin:0;">
+                    Mordev <span class="glow-text">Master</span>
+                </h1>
+                <p style="color:#64748B; margin-top:5px; font-weight:500;">Developer Control Center</p>
             </div>
             <button class="btn btn-primary" onclick="showAddVendor()">
-                <span class="material-icons-round">person_add</span> Nuevo Socio
+                <span class="material-icons-round">person_add</span> Nuevo Socio Comercial
             </button>
         </div>
 
-        <div class="grid">
-            <!-- LISTA DE VENDEDORES -->
-            <div class="card" style="grid-column: span 2;">
-                <h3 style="display:flex; align-items:center; gap:8px;"><span class="material-icons-round">group</span> Socios Comerciales</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Código</th>
-                            <th>Email</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vendedoresBody">
-                        <!-- JS -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- LIQUIDACIONES DEL MES -->
-            <div class="card" style="grid-column: span 2;">
-                <h3 style="display:flex; align-items:center; gap:8px;"><span class="material-icons-round">payments</span> Liquidaciones Pendientes (Corte Actual)</h3>
+        <!-- TABLA VENDEDORES -->
+        <div class="card">
+            <h3><span class="material-icons-round" style="color:var(--brand-master)">hub</span> Red de Socios</h3>
+            <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
                             <th>Socio</th>
-                            <th>Negocios Activos</th>
-                            <th>Ingresos Estimados</th>
-                            <th>Comisión (20%)</th>
+                            <th>Código</th>
+                            <th>Contacto</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="liquidacionesBody">
-                        <!-- JS -->
-                    </tbody>
+                    <tbody id="vendedoresBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TABLA PAGOS -->
+        <div class="card">
+            <h3><span class="material-icons-round" style="color:var(--brand-master)">account_balance_wallet</span> Corte Mensual y Liquidaciones</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Socio</th>
+                            <th style="text-align:center">Negocios Activos</th>
+                            <th>Ingresos Brutos</th>
+                            <th>Tu Comisión (20%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liquidacionesBody"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- MODAL AGREGAR SOCIO -->
-    <div id="vendorModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); align-items:center; justify-content:center; z-index:100;">
-        <div class="card" style="width:400px;">
-            <h2 id="modalTitle">Nuevo Socio Comercial</h2>
+    <!-- MODAL AGREGAR -->
+    <div id="vendorModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); align-items:center; justify-content:center; z-index:2000;">
+        <div class="card" style="width:100%; max-width:420px; border-color:var(--brand-master);">
+            <h2 style="font-weight: 800; font-size: 24px;">Crear Socio</h2>
             <div style="margin-top:20px;">
-                <label style="font-size:12px; color:rgba(255,255,255,0.4)">Nombre Completo</label>
-                <input type="text" id="vName" placeholder="Ej: Juan Perez">
+                <label style="font-size:12px; color:#64748B; text-transform:uppercase; font-weight:700;">Nombre del Socio</label>
+                <input type="text" id="vName" placeholder="Ej: David Alejandro" style="margin-bottom:20px;">
                 
-                <label style="font-size:12px; color:rgba(255,255,255,0.4); margin-top:15px; display:block">Correo Electrónico</label>
-                <input type="email" id="vEmail" placeholder="juan@correo.com">
+                <label style="font-size:12px; color:#64748B; text-transform:uppercase; font-weight:700;">Email Personal</label>
+                <input type="email" id="vEmail" placeholder="socio@mordev.co" style="margin-bottom:20px;">
 
-                <label style="font-size:12px; color:rgba(255,255,255,0.4); margin-top:15px; display:block">Código de Referido (Opcional)</label>
-                <input type="text" id="vCode" placeholder="Dejar vacío para auto-generar">
+                <label style="font-size:12px; color:#64748B; text-transform:uppercase; font-weight:700;">Código Personalizado</label>
+                <input type="text" id="vCode" placeholder="Vacío para generar aleatorio">
             </div>
-            <div style="display:flex; gap:10px; margin-top:30px;">
-                <button class="btn" style="flex:1; background:rgba(255,255,255,0.1); color:white;" onclick="closeVendorModal()">Cancelar</button>
-                <button class="btn btn-primary" style="flex:1;" onclick="saveVendor()">Guardar</button>
+            <div style="display:flex; gap:12px; margin-top:35px;">
+                <button class="btn" style="flex:1; background:rgba(255,255,255,0.05); color:white;" onclick="closeVendorModal()">Cancelar</button>
+                <button class="btn btn-primary" style="flex:1;" onclick="saveVendor()">Crear Socio</button>
             </div>
         </div>
     </div>
 
     <script>
+        let MASTER_KEY = "";
+
+        function unlock() {
+            const pass = document.getElementById('masterPassInp').value;
+            if (pass === "minecra32") {
+                MASTER_KEY = pass;
+                document.getElementById('masterLock').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                loadData();
+            } else {
+                document.getElementById('lockError').style.display = 'block';
+            }
+        }
+
         async function loadData() {
-            const [vendRes, liqRes] = await Promise.all([
-                fetch('/api/master/vendedores'),
-                fetch('/api/master/liquidaciones')
-            ]);
-            const vends = await vendRes.json();
-            const liqs = await liqRes.json();
+            try {
+                const [vendRes, liqRes] = await Promise.all([
+                    fetch('/api/master/vendedores', { headers: { 'x-master-key': MASTER_KEY } }),
+                    fetch('/api/master/liquidaciones', { headers: { 'x-master-key': MASTER_KEY } })
+                ]);
+                
+                const vends = await vendRes.json();
+                const liqs = await liqRes.json();
 
-            // Render Vendedores
-            document.getElementById('vendedoresBody').innerHTML = vends.map(v => `
-                <tr>
-                    <td><strong>${v.nombre}</strong></td>
-                    <td><code style="background:rgba(255,255,255,0.1);padding:4px 8px;border-radius:6px;color:var(--brand-primary)">${v.codigo_referido}</code></td>
-                    <td>${v.email || '—'}</td>
-                    <td><span class="status-pill ${v.activo ? 'status-active' : 'status-inactive'}">${v.activo ? 'Activo' : 'Inactivo'}</span></td>
-                    <td>
-                        <button class="btn btn-sm" style="background:rgba(255,255,255,0.05); color:white;" onclick="toggleVendor('${v.id}', ${v.activo})">
-                            ${v.activo ? 'Desactivar' : 'Activar'}
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
+                document.getElementById('vendedoresBody').innerHTML = vends.map(v => `
+                    <tr>
+                        <td><strong style="color:#fff">${v.nombre}</strong></td>
+                        <td><code style="background:rgba(139, 92, 246, 0.1); color:var(--brand-master); padding:5px 10px; border-radius:8px; font-weight:700; font-size:13px;">${v.codigo_referido}</code></td>
+                        <td>${v.email || '—'}</td>
+                        <td><span class="status-pill ${v.activo ? 'status-active' : 'status-inactive'}">${v.activo ? 'Activo' : 'Pausado'}</span></td>
+                        <td>
+                            <button class="btn btn-sm" style="background:rgba(255,255,255,0.05); color:#fff;" onclick="toggleVendor('${v.id}', ${v.activo})">
+                                ${v.activo ? 'Pausar' : 'Reactivar'}
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
 
-            // Render Liquidaciones
-            document.getElementById('liquidacionesBody').innerHTML = liqs.map(l => `
-                <tr>
-                    <td><strong>${l.nombre_vendedor}</strong></td>
-                    <td>${l.negocios_activos_mes}</td>
-                    <td>COP ${l.ingresos_brutos_mes.toLocaleString()}</td>
-                    <td><strong style="color:#00E096">COP ${l.comision_a_pagar.toLocaleString()}</strong></td>
-                </tr>
-            `).join('');
+                document.getElementById('liquidacionesBody').innerHTML = liqs.map(l => `
+                    <tr>
+                        <td><strong style="color:#fff">${l.nombre_vendedor}</strong></td>
+                        <td style="text-align:center"><span style="color:var(--brand-master); font-weight:800; font-size:18px;">${l.negocios_activos_mes}</span></td>
+                        <td style="color:#94A3B8">COP ${l.ingresos_brutos_mes.toLocaleString()}</td>
+                        <td><strong style="color:#10B981; font-size:16px">COP ${l.comision_a_pagar.toLocaleString()}</strong></td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         function showAddVendor() { document.getElementById('vendorModal').style.display = 'flex'; }
@@ -145,7 +238,7 @@
             };
             await fetch('/api/master/vendedores', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'x-master-key': MASTER_KEY },
                 body: JSON.stringify(body)
             });
             closeVendorModal();
@@ -155,13 +248,11 @@
         async function toggleVendor(id, current) {
             await fetch(`/api/master/vendedores/${id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'x-master-key': MASTER_KEY },
                 body: JSON.stringify({ activo: !current })
             });
             loadData();
         }
-
-        loadData();
     </script>
 </body>
 </html>

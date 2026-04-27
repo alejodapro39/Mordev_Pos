@@ -341,9 +341,14 @@ def login():
     })
 
 # ── MASTER ADMIN (Solo Desarrollador) ────────────────────────────────────────
+def check_master_auth():
+    return request.headers.get('x-master-key') == 'minecra32'
+
 @app.route('/api/master/vendedores', methods=['GET', 'POST'])
 def master_vendedores():
-    # Aquí podrías añadir un chequeo de 'Master Password' desde el header o session
+    if not check_master_auth():
+        return jsonify({"error": "No autorizado"}), 401
+    
     client = database.get_client()
     if request.method == 'GET':
         res = client.table("vendedores").select("*").order("created_at", desc=True).execute()
@@ -351,14 +356,13 @@ def master_vendedores():
     
     if request.method == 'POST':
         data = request.get_json()
-        # Generar código único si no viene
         import random, string
         codigo = data.get('codigo_referido') or ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
         
         nuevo_vendedor = {
             "nombre": data['nombre'],
             "email": data.get('email'),
-            "codigo_referido": codigo,
+            "codigo_referido": codigo.upper(),
             "comision_porcentaje": 0.20,
             "datos_pago": data.get('datos_pago', {}),
             "activo": True
@@ -368,6 +372,9 @@ def master_vendedores():
 
 @app.route('/api/master/vendedores/<id>', methods=['PUT'])
 def master_update_vendedor(id):
+    if not check_master_auth():
+        return jsonify({"error": "No autorizado"}), 401
+        
     client = database.get_client()
     data = request.get_json()
     res = client.table("vendedores").update(data).eq("id", id).execute()
@@ -375,6 +382,9 @@ def master_update_vendedor(id):
 
 @app.route('/api/master/liquidaciones', methods=['GET'])
 def master_liquidaciones():
+    if not check_master_auth():
+        return jsonify({"error": "No autorizado"}), 401
+        
     client = database.get_client()
     res = client.table("liquidacion_vendedores").select("*").execute()
     return jsonify(res.data)
