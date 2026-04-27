@@ -5,6 +5,7 @@ Configura RESEND_API_KEY y RESEND_FROM_EMAIL en tu .env
 """
 import os
 import requests
+from datetime import datetime, timedelta
 
 RESEND_API_KEY  = os.environ.get("RESEND_API_KEY", "")
 RESEND_FROM     = os.environ.get("RESEND_FROM_EMAIL", "Mordev POS <noreply@mordev.co>")
