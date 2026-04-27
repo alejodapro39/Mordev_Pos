@@ -60,40 +60,52 @@
     </div>
 
     <!-- LOGIN SCREEN -->
-    <div id="loginScreen" class="login-screen">
-        <div class="login-card">
-            <div class="login-header">
-                <span class="material-icons-round login-icon">pets</span>
-                <h1>PawStore</h1>
-                <p>Ingresa tus credenciales para continuar</p>
+    <div id="loginScreen"
+        style="position: fixed; inset: 0; background: #0A0B0F; display: flex; align-items: center; justify-content: center; z-index: 1000; font-family: 'Outfit', sans-serif;">
+        
+        <div style="position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(0, 200, 255, 0.1) 0%, transparent 70%); top: -100px; right: -100px; filter: blur(60px);"></div>
+        <div style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%); bottom: -50px; left: -50px; filter: blur(50px);"></div>
+
+        <div class="login-card" style="background: #12131A; border: 1px solid rgba(255,255,255,0.08); padding: 48px; border-radius: 32px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); position: relative; z-index: 10;">
+            
+            <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #00C8FF, #0088FF); border-radius: 20px; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0, 200, 255, 0.2);">
+                <span class="material-icons-round" style="color: white; font-size: 32px;">pets</span>
             </div>
-            <form id="loginForm" onsubmit="return handleLogin(event)">
-                <div class="input-group">
-                    <span class="material-icons-round">person</span>
-                    <input type="text" id="loginUsername" placeholder="Usuario" required autocomplete="username">
+
+            <h1 style="color: white; font-size: 32px; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px;">PawStore <span style="color: #00C8FF;">POS</span></h1>
+            <p style="color: rgba(255,255,255,0.5); font-size: 15px; margin-bottom: 40px;">Ingresa tus credenciales para continuar</p>
+
+            <form onsubmit="return handleLogin(event)" style="text-align: left;">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; margin-left: 4px;">Usuario</label>
+                    <div style="display: flex; align-items: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 0 16px;">
+                        <span class="material-icons-round" style="color: rgba(255,255,255,0.3); font-size: 20px; margin-right: 12px;">person</span>
+                        <input type="text" id="loginUsername" placeholder="Tu usuario" required style="flex: 1; background: transparent; border: none; color: white; padding: 16px 0; font-size: 15px; outline: none;">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <span class="material-icons-round">lock</span>
-                    <input type="password" id="loginPassword" placeholder="Contraseña" required
-                        autocomplete="current-password">
+
+                <div style="margin-bottom: 32px;">
+                    <label style="display: block; color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; margin-left: 4px;">Contraseña</label>
+                    <div style="display: flex; align-items: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 0 16px;">
+                        <span class="material-icons-round" style="color: rgba(255,255,255,0.3); font-size: 20px; margin-right: 12px;">lock</span>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required style="flex: 1; background: transparent; border: none; color: white; padding: 16px 0; font-size: 15px; outline: none;">
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
-                    <span class="material-icons-round">login</span>
-                    Iniciar Sesión
+
+                <button type="submit" id="loginBtn" style="width: 100%; background: linear-gradient(135deg, #00C8FF, #0088FF); color: white; border: none; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 20px rgba(0, 200, 255, 0.2);">
+                    <span class="material-icons-round">login</span> Iniciar Sesión
                 </button>
-                <p id="loginError" class="error-msg" style="display:none;"></p>
+                <p id="loginError" style="color: #FF4D6D; font-size: 14px; margin-top: 15px; text-align: center; display: none;"></p>
             </form>
-            <div style="text-align: center; margin-top: 20px; color: var(--text-muted); font-size: 14px;">
-                <a href="javascript:void(0)" onclick="showPasswordResetModal()"
-                   style="color: var(--accent-blue); text-decoration: none; font-weight: 500;font-size:13px;">¿Olvidaste tu contraseña?</a>
+
+            <div style="margin-top: 32px; display: flex; flex-direction: column; gap: 16px;">
+                <a href="javascript:void(0)" onclick="showPasswordResetModal()" style="color: rgba(255,255,255,0.4); text-decoration: none; font-size: 14px; font-weight: 600;">¿Olvidaste tu contraseña?</a>
+                <div style="font-size: 14px; color: rgba(255,255,255,0.4);">¿No tienes una cuenta? <a href="/register" style="color: #00C8FF; text-decoration: none; font-weight: 700;">Regístrate</a></div>
             </div>
-            <div style="text-align: center; margin-top: 14px; color: var(--text-muted); font-size: 14px;">
-                ¿No tienes una cuenta? <a href="/register"
-                    style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Regístrate</a>
-            </div>
-            <div style="text-align: center; margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
-                <a href="/socio" style="color: #00E5A0; text-decoration: none; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                    <span class="material-icons-round" style="font-size:18px">handshake</span>
+
+            <div style="margin-top: 32px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 24px;">
+                <a href="/socio" style="color: #00E5A0; text-decoration: none; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span class="material-icons-round" style="font-size: 20px;">handshake</span>
                     Portal de Socios Comerciales
                 </a>
             </div>

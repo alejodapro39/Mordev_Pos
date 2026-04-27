@@ -363,6 +363,7 @@ def master_vendedores():
             "nombre": data['nombre'],
             "email": data.get('email'),
             "codigo_referido": codigo.upper(),
+            "password": data.get('password'), # Añadido campo password
             "comision_porcentaje": 0.20,
             "datos_pago": data.get('datos_pago', {}),
             "activo": True
@@ -390,13 +391,18 @@ def master_liquidaciones():
     return jsonify(res.data)
 
 # ── PORTAL DE SOCIOS (Vendedores) ─────────────────────────────────────────────
-@app.route('/api/vendedor/stats/<codigo>')
-def vendedor_stats(codigo):
+@app.route('/api/vendedor/stats', methods=['POST'])
+def vendedor_stats():
+    data = request.get_json()
+    codigo = data.get('codigo')
+    password = data.get('password')
+    
     client = database.get_client()
-    # 1. Buscar vendedor
-    vend = client.table("vendedores").select("*").eq("codigo_referido", codigo).eq("activo", True).maybe_single().execute()
+    # 1. Buscar vendedor con código y contraseña
+    vend = client.table("vendedores").select("*").eq("codigo_referido", codigo).eq("password", password).eq("activo", True).maybe_single().execute()
+    
     if not vend.data:
-        return jsonify({"error": "Código inválido o socio inactivo"}), 404
+        return jsonify({"error": "Código o contraseña incorrectos"}), 404
     
     # 2. Obtener sus estadísticas de la vista
     stats = client.table("liquidacion_vendedores").select("*").eq("codigo_referido", codigo).maybe_single().execute()
@@ -686,7 +692,7 @@ def export_inventory_excel():
 
     wb.save(output)
     output.seek(0)
-    from datetime import datetime
+    from datetime import datetime, timedelta
     filename = f"inventario_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
     return send_file(
         output,

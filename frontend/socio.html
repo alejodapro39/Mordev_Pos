@@ -26,7 +26,8 @@
         <h1 style="font-size:28px; font-weight:800; letter-spacing:-1px;">Portal de <span style="color:var(--brand-primary)">Socios</span></h1>
         <p style="color:rgba(255,255,255,0.5); margin-top:10px;">Ingresa tu código de socio para ver tus ganancias</p>
         
-        <input type="text" id="partnerCode" placeholder="EJ: MORDEV123" maxlength="10">
+        <input type="text" id="partnerCode" placeholder="CÓDIGO DE SOCIO" maxlength="10" style="margin-bottom:10px;">
+        <input type="password" id="partnerPass" placeholder="CONTRASEÑA">
         <button class="btn" onclick="loginPartner()">Entrar al Portal</button>
         <p id="errorMsg" style="color:#FF4D6D; margin-top:15px; font-size:14px; display:none;"></p>
     </div>
@@ -59,12 +60,17 @@
 
     <script>
         async function loginPartner() {
-            const code = document.getElementById('partnerCode').value.trim();
+            const code = document.getElementById('partnerCode').value.trim().toUpperCase();
+            const password = document.getElementById('partnerPass').value;
             const error = document.getElementById('errorMsg');
-            if (!code) return;
+            if (!code || !password) return;
 
             try {
-                const res = await fetch(`/api/vendedor/stats/${code}`);
+                const res = await fetch(`/api/vendedor/stats`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codigo: code, password: password })
+                });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error);
 
