@@ -514,7 +514,6 @@ def create_password_reset_token(email: str) -> dict:
             "token_hash": token_hash,
             "expires_at": expires_at,
             "usado":      False,
-            "id_negocio": id_negocio # Asegurar que se vincula al negocio
         }).execute()
 
         return {

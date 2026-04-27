@@ -69,10 +69,10 @@
         <div class="login-card" style="background: #12131A; border: 1px solid rgba(255,255,255,0.08); padding: 48px; border-radius: 32px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); position: relative; z-index: 10;">
             
             <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #00C8FF, #0088FF); border-radius: 20px; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0, 200, 255, 0.2);">
-                <span class="material-icons-round" style="color: white; font-size: 32px;">pets</span>
+                <span class="material-icons-round" style="color: white; font-size: 32px;">storefront</span>
             </div>
 
-            <h1 style="color: white; font-size: 32px; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px;">PawStore <span style="color: #00C8FF;">POS</span></h1>
+            <h1 style="color: white; font-size: 32px; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px;">Mordev <span style="color: #00C8FF;">POS</span></h1>
             <p style="color: rgba(255,255,255,0.5); font-size: 15px; margin-bottom: 40px;">Ingresa tus credenciales para continuar</p>
 
             <form onsubmit="return handleLogin(event)" style="text-align: left;">
@@ -120,8 +120,8 @@
                 <span class="material-icons-round">menu</span>
             </button>
             <div class="mobile-logo">
-                <span class="material-icons-round">pets</span>
-                <span>PawStore</span>
+                <span class="material-icons-round">storefront</span>
+                <span>Mordev POS</span>
             </div>
             <div class="user-avatar-sm" onclick="showView('settings')">
                 <span id="mobileUserInitial">U</span>
@@ -693,12 +693,14 @@
                 </div>
                 <div class="settings-grid">
                     <!-- Factura Config -->
-                    <div class="card">
-                        <div class="card-header">
-                            <span class="material-icons-round">receipt</span>
-                            <h3>Formato de Factura</h3>
-                        </div>
-                        <div class="card-body">
+                    <div class="auth-header">
+                <div class="auth-icon-wrapper">
+                    <span class="material-icons-round">storefront</span>
+                </div>
+                <h1>Mordev <span>POS</span></h1>
+                <p>Ingresa tus credenciales para continuar</p>
+            </div>
+ class="card-body">
                             <p>Personaliza cómo se ven tus facturas impresas.</p>
                             <button class="btn btn-secondary btn-full" onclick="openInvoiceEditor()">
                                 <span class="material-icons-round">edit_note</span>
