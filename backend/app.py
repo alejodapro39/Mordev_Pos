@@ -161,11 +161,16 @@ def register_business():
     if not data or 'nombre_negocio' not in data or 'email' not in data or 'password' not in data:
         return jsonify({"error": "Faltan campos obligatorios"}), 400
 
+    # Manejo seguro de campos opcionales
+    codigo_ref = data.get('codigo_referido')
+    if codigo_ref:
+        codigo_ref = str(codigo_ref).strip() or None
+
     result = database.registrar_nuevo_negocio(
         data['nombre_negocio'],
         data['email'],
         data['password'],
-        codigo_referido=data.get('codigo_referido', '').strip() or None,
+        codigo_referido=codigo_ref,
         categoria=data.get('categoria', 'general'),
         color_hex=data.get('color_hex'),
         icono_slug=data.get('icono_slug'),
