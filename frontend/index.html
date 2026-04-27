@@ -91,6 +91,12 @@
                 ¿No tienes una cuenta? <a href="/register"
                     style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Regístrate</a>
             </div>
+            <div style="text-align: center; margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+                <a href="/socio" style="color: #00E5A0; text-decoration: none; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <span class="material-icons-round" style="font-size:18px">handshake</span>
+                    Portal de Socios Comerciales
+                </a>
+            </div>
         </div>
     </div>
 
@@ -198,10 +204,7 @@
                     <span class="material-icons-round">assessment</span>
                     <span>Reportes</span>
                 </li>
-                <li class="nav-item admin-only" data-view="liquidaciones" onclick="switchView('liquidaciones')">
-                    <span class="material-icons-round">payments</span>
-                    <span>Liquidaciones</span>
-                </li>
+                <!-- Liquidaciones eliminadas de aquí -->
                 <li class="nav-item admin-only" data-view="import" onclick="switchView('import')">
                     <span class="material-icons-round">upload_file</span>
                     <span>Importar Excel</span>
@@ -606,33 +609,7 @@
             </section>
             </section>
 
-            <!-- LIQUIDACIONES VIEW (Admin - Comisiones de socios que venden el software) -->
-            <section id="view-liquidaciones" class="view admin-only">
-                <div class="view-header">
-                    <h1>💰 Liquidaciones del Mes</h1>
-                    <p>Comisiones de los socios comerciales que venden Mordev POS</p>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Socio Comercial</th>
-                                <th>Email / Contacto</th>
-                                <th style="text-align:center">Negocios Activos</th>
-                                <th>Ingresos Brutos</th>
-                                <th>Comisión (20%)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="liquidacionesBody">
-                            <tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-secondary)">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style="margin-top:16px;padding:16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;font-size:13px;color:var(--text-secondary)">
-                    <span class="material-icons-round" style="font-size:16px;vertical-align:middle;margin-right:6px">info</span>
-                    Cálculo basado en mensualidad de <strong>$60,000 COP</strong> por negocio activo este mes. Comisión del <strong>20%</strong> por socio.
-                </div>
-            </section>
+            <!-- Sección de Liquidaciones eliminada -->
 
             <!-- REPORTS VIEW (Admin) -->
             <section id="view-reports" class="view">

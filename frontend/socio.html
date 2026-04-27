@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Socios | Mordev POS</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        :root { --brand-primary: #00E5A0; }
+        body { background: #0A0B0F; font-family: 'Outfit', sans-serif; color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        .portal-card { background: #12131A; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 40px; width: 100%; max-width: 500px; text-align: center; }
+        .stats-view { display: none; text-align: left; max-width: 800px; }
+        .stat-box { background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+        input { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; padding: 16px; width: 100%; font-size: 18px; text-align: center; margin: 20px 0; }
+        .btn { background: var(--brand-primary); color: #000; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 800; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SOCIO -->
+    <div id="loginView" class="portal-card">
+        <div style="width:60px; height:60px; background:var(--brand-primary); border-radius:18px; margin:0 auto 20px; display:flex; align-items:center; justify-content:center;">
+            <span class="material-icons-round" style="color:#000; font-size:32px;">handshake</span>
+        </div>
+        <h1 style="font-size:28px; font-weight:800; letter-spacing:-1px;">Portal de <span style="color:var(--brand-primary)">Socios</span></h1>
+        <p style="color:rgba(255,255,255,0.5); margin-top:10px;">Ingresa tu código de socio para ver tus ganancias</p>
+        
+        <input type="text" id="partnerCode" placeholder="EJ: MORDEV123" maxlength="10">
+        <button class="btn" onclick="loginPartner()">Entrar al Portal</button>
+        <p id="errorMsg" style="color:#FF4D6D; margin-top:15px; font-size:14px; display:none;"></p>
+    </div>
+
+    <!-- DASHBOARD SOCIO -->
+    <div id="dashboardView" class="stats-view portal-card" style="max-width:800px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+            <h2 id="partnerName" style="font-size:24px; font-weight:800;">Hola, ...</h2>
+            <button class="btn" style="width:auto; padding:8px 16px; background:rgba(255,255,255,0.1); color:white;" onclick="location.reload()">Salir</button>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+            <div class="stat-box">
+                <span style="font-size:13px; color:rgba(255,255,255,0.6)">Negocios Activos (Este Mes)</span>
+                <h3 id="statNegocios" style="font-size:32px; margin-top:5px;">0</h3>
+            </div>
+            <div class="stat-box" style="background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.1);">
+                <span style="font-size:13px; color:rgba(255,255,255,0.6)">Mi Comisión (20%)</span>
+                <h3 id="statComision" style="font-size:32px; margin-top:5px; color:var(--brand-primary)">$0</h3>
+            </div>
+        </div>
+
+        <div style="margin-top:30px;">
+            <h4 style="margin-bottom:15px; color:rgba(255,255,255,0.4)">Tus Negocios Referidos</h4>
+            <div id="negociosList" style="display:flex; flex-direction:column; gap:10px;">
+                <!-- JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loginPartner() {
+            const code = document.getElementById('partnerCode').value.trim();
+            const error = document.getElementById('errorMsg');
+            if (!code) return;
+
+            try {
+                const res = await fetch(`/api/vendedor/stats/${code}`);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                // Show Dashboard
+                document.getElementById('loginView').style.display = 'none';
+                document.getElementById('dashboardView').style.display = 'block';
+
+                document.getElementById('partnerName').textContent = `Hola, ${data.vendedor.nombre}`;
+                document.getElementById('statNegocios').textContent = data.stats.negocios_activos_mes;
+                document.getElementById('statComision').textContent = `COP ${data.stats.comision_a_pagar.toLocaleString()}`;
+
+                document.getElementById('negociosList').innerHTML = data.negocios.map(n => `
+                    <div style="background:rgba(255,255,255,0.03); padding:15px; border-radius:12px; display:flex; justify-content:space-between;">
+                        <span>${n.nombre_negocio}</span>
+                        <span style="color:${n.licencia_activa ? '#00E5A0' : '#FF4D6D'}">${n.licencia_activa ? 'Activo' : 'Vencido'}</span>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                error.textContent = err.message;
+                error.style.display = 'block';
+            }
+        }
+
+        // Auto-login if code in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('code')) {
+            document.getElementById('partnerCode').value = urlParams.get('code');
+            loginPartner();
+        }
+    </script>
+</body>
+</html>

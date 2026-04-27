@@ -304,8 +304,6 @@ function switchView(viewName) {
         case 'users':          loadUsers(); break;
         case 'drafts':         loadDrafts(); break;
         case 'settings':       loadSettings(); loadThemeSettings(); break;
-        case 'reports':        /* nothing */ break;
-        case 'liquidaciones':  loadLiquidaciones(); break;
     }
 }
 
@@ -1846,31 +1844,7 @@ async function createSubscriptionPreference() {
 // ===========================
 // LIQUIDACIONES (Admin Panel)
 // ===========================
-async function loadLiquidaciones() {
-    const container = document.getElementById('liquidacionesBody');
-    if (!container) return;
-    container.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-secondary)"><span class="material-icons-round" style="font-size:32px;display:block;margin-bottom:8px">hourglass_top</span>Cargando...</td></tr>';
-    try {
-        const data = await api('/api/admin/liquidaciones');
-        if (!data.length) {
-            container.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-secondary)">No hay vendedores con negocios activos este mes.</td></tr>';
-            return;
-        }
-        container.innerHTML = data.map(v => `
-            <tr>
-                <td><strong>${escapeHtml(v.nombre_vendedor)}</strong><br>
-                    <small style="color:var(--text-secondary)">${escapeHtml(v.codigo_referido)}</small></td>
-                <td>${escapeHtml(v.email_vendedor || '—')}</td>
-                <td style="text-align:center"><span style="background:rgba(0,200,255,0.1);color:#00C8FF;padding:4px 10px;border-radius:20px;font-weight:700">${v.negocios_activos_mes}</span></td>
-                <td>${formatPrice(v.ingresos_brutos_mes || 0)}</td>
-                <td><strong style="color:#00E5A0;font-size:16px">${formatPrice(v.comision_a_pagar || 0)}</strong><br>
-                    <small style="color:var(--text-secondary)">${escapeHtml(v.datos_pago && v.datos_pago.tipo ? v.datos_pago.tipo : 'N/A')}: ${escapeHtml(v.datos_pago && v.datos_pago.numero ? v.datos_pago.numero : '—')}</small></td>
-            </tr>
-        `).join('');
-    } catch (err) {
-        container.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--accent-red)">${err.message}</td></tr>`;
-    }
-}
+// Liquidaciones movidas al Panel Maestro
 
 // ===========================
 // THEME SETTINGS (Config Panel)

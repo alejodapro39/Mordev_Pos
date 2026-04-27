@@ -138,6 +138,14 @@ def serve_landing():
 def serve_index():
     return send_from_directory(app.static_folder, 'index.html')
 
+@app.route('/master')
+def serve_master():
+    return send_from_directory('../frontend', 'master.html')
+
+@app.route('/socio')
+def serve_socio():
+    return send_from_directory('../frontend', 'socio.html')
+
 @app.route('/register')
 def serve_register():
     return send_from_directory(app.static_folder, 'register.html')
@@ -330,6 +338,66 @@ def login():
             "role": user['role'],
             "avatar_path": user.get('avatar_path', '')
         }
+    })
+
+# ── MASTER ADMIN (Solo Desarrollador) ────────────────────────────────────────
+@app.route('/api/master/vendedores', methods=['GET', 'POST'])
+def master_vendedores():
+    # Aquí podrías añadir un chequeo de 'Master Password' desde el header o session
+    client = database.get_client()
+    if request.method == 'GET':
+        res = client.table("vendedores").select("*").order("created_at", desc=True).execute()
+        return jsonify(res.data)
+    
+    if request.method == 'POST':
+        data = request.get_json()
+        # Generar código único si no viene
+        import random, string
+        codigo = data.get('codigo_referido') or ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        
+        nuevo_vendedor = {
+            "nombre": data['nombre'],
+            "email": data.get('email'),
+            "codigo_referido": codigo,
+            "comision_porcentaje": 0.20,
+            "datos_pago": data.get('datos_pago', {}),
+            "activo": True
+        }
+        res = client.table("vendedores").insert(nuevo_vendedor).execute()
+        return jsonify(res.data[0])
+
+@app.route('/api/master/vendedores/<id>', methods=['PUT'])
+def master_update_vendedor(id):
+    client = database.get_client()
+    data = request.get_json()
+    res = client.table("vendedores").update(data).eq("id", id).execute()
+    return jsonify(res.data[0])
+
+@app.route('/api/master/liquidaciones', methods=['GET'])
+def master_liquidaciones():
+    client = database.get_client()
+    res = client.table("liquidacion_vendedores").select("*").execute()
+    return jsonify(res.data)
+
+# ── PORTAL DE SOCIOS (Vendedores) ─────────────────────────────────────────────
+@app.route('/api/vendedor/stats/<codigo>')
+def vendedor_stats(codigo):
+    client = database.get_client()
+    # 1. Buscar vendedor
+    vend = client.table("vendedores").select("*").eq("codigo_referido", codigo).eq("activo", True).maybe_single().execute()
+    if not vend.data:
+        return jsonify({"error": "Código inválido o socio inactivo"}), 404
+    
+    # 2. Obtener sus estadísticas de la vista
+    stats = client.table("liquidacion_vendedores").select("*").eq("codigo_referido", codigo).maybe_single().execute()
+    
+    # 3. Obtener lista de negocios traídos
+    negocios = client.table("negocios").select("nombre_negocio, created_at, licencia_activa").eq("vendedor_id", vend.data['id']).execute()
+    
+    return jsonify({
+        "vendedor": vend.data,
+        "stats": stats.data or {"negocios_activos_mes": 0, "comision_a_pagar": 0},
+        "negocios": negocios.data
     })
 
 
