@@ -256,7 +256,23 @@ CREATE INDEX idx_sales_date        ON sales(date);
 CREATE INDEX idx_drafts_negocio    ON draft_invoices(id_negocio);
 CREATE INDEX idx_settings_negocio  ON app_settings(id_negocio);
 
--- ── PASO 5: VENDEDOR DEMO (borra este bloque si no lo quieres) ─
+-- ── PASO 5: DESHABILITAR RLS ─────────────────────────────────
+-- El backend usa Service Role Key que bypasea RLS de todas formas,
+-- pero lo deshabilitamos explícitamente para evitar errores.
+ALTER TABLE vendedores              DISABLE ROW LEVEL SECURITY;
+ALTER TABLE negocios                DISABLE ROW LEVEL SECURITY;
+ALTER TABLE users                   DISABLE ROW LEVEL SECURITY;
+ALTER TABLE products                DISABLE ROW LEVEL SECURITY;
+ALTER TABLE customers               DISABLE ROW LEVEL SECURITY;
+ALTER TABLE invoices                DISABLE ROW LEVEL SECURITY;
+ALTER TABLE sales                   DISABLE ROW LEVEL SECURITY;
+ALTER TABLE draft_invoices          DISABLE ROW LEVEL SECURITY;
+ALTER TABLE draft_invoice_items     DISABLE ROW LEVEL SECURITY;
+ALTER TABLE app_settings            DISABLE ROW LEVEL SECURITY;
+ALTER TABLE pagos_historial         DISABLE ROW LEVEL SECURITY;
+ALTER TABLE password_reset_tokens   DISABLE ROW LEVEL SECURITY;
+
+-- ── PASO 6: VENDEDOR DEMO (borra este bloque si no lo quieres) ─
 -- INSERT INTO vendedores (nombre, email, codigo_referido, datos_pago)
 -- VALUES ('Socio Demo', 'socio@mordev.co', 'MORDEV2026',
 --         '{"tipo":"nequi","numero":"3001234567"}')

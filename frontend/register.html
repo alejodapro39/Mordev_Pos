@@ -517,16 +517,24 @@
                 headers:{'Content-Type':'application/json'},
                 body: JSON.stringify(body),
             });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Error en el registro');
-
-            // Éxito
-            document.getElementById('step2').style.display = 'none';
-            const sm = document.getElementById('successMsg');
-            if (data.vendedor_vinculado) {
-                sm.innerHTML = 'Tu licencia de 30 días ha sido activada.<br>Registrado con código de referido ✓';
+            
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Error en el registro');
+                
+                // Éxito
+                document.getElementById('step2').style.display = 'none';
+                const sm = document.getElementById('successMsg');
+                if (data.vendedor_vinculado) {
+                    sm.innerHTML = 'Tu negocio ha sido creado exitosamente.<br>Vinculado a socio comercial ✓';
+                }
+                document.getElementById('successState').style.display = 'block';
+            } else {
+                const text = await res.text();
+                console.error('Respuesta no-JSON del servidor:', text);
+                throw new Error(`Error del servidor (${res.status}). Verifica los logs del backend.`);
             }
-            document.getElementById('successState').style.display = 'block';
 
         } catch (err) {
             const errEl  = document.getElementById('step2Error');
