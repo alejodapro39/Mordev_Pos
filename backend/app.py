@@ -251,20 +251,20 @@ def request_password_reset():
     if 'error' in result:
         return jsonify(result), 500
 
-        # Solo enviar email si se generó token real (el email existe)
-        if result.get('raw_token'):
-            try:
-                from email_service import send_password_reset_email
-                reset_url = f"{APP_BASE_URL}/restablecer?token={result['raw_token']}"
-                email_res = send_password_reset_email(email, result.get('nombre_negocio', ''), reset_url)
+    # Solo enviar email si se generó token real (el email existe)
+    if result.get('raw_token'):
+        try:
+            from email_service import send_password_reset_email
+            reset_url = f"{APP_BASE_URL}/restablecer?token={result['raw_token']}"
+            email_res = send_password_reset_email(email, result.get('nombre_negocio', ''), reset_url)
+            
+            if 'error' in email_res:
+                print(f"[RESET] Error de Resend: {email_res['error']}")
+            else:
+                print(f"[RESET] Correo enviado exitosamente a {email}")
                 
-                if 'error' in email_res:
-                    print(f"[RESET] Error de Resend: {email_res['error']}")
-                else:
-                    print(f"[RESET] Correo enviado exitosamente a {email}")
-                    
-            except Exception as e:
-                print(f"[RESET] Excepción fatal enviando email: {str(e)}")
+        except Exception as e:
+            print(f"[RESET] Excepción fatal enviando email: {str(e)}")
 
     # Siempre retornar el mismo mensaje (no revelar si el email existe)
     return jsonify({"success": True, "message": "Si el correo existe, recibirás las instrucciones en unos momentos."})

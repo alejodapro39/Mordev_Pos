@@ -475,18 +475,33 @@ import secrets
 def create_password_reset_token(email: str) -> dict:
     """
     Genera un token de recuperación de contraseña.
-    El token RAW se envía por email; el hash se guarda en BD.
-    Expira en 180 segundos (3 minutos).
+    Busca el correo en 'negocios' o en 'users'.
     """
     client = get_client()
     try:
-        # Verificar que el email existe en algún negocio
-        res = client.table("negocios").select("id, nombre_negocio").eq("email", email).maybe_single().execute()
-        if not res.data:
-            # No revelar si el email existe o no (seguridad)
-            return {"success": True, "message": "Si el correo existe, recibirás las instrucciones."}
+        id_negocio = None
+        nombre_negocio = "Usuario"
 
-        # Invalidar tokens anteriores del mismo email
+        # 1. Intentar buscar en la tabla 'negocios'
+        res_neg = client.table("negocios").select("id, nombre_negocio").eq("email", email).maybe_single().execute()
+        if res_neg.data:
+            id_negocio = res_neg.data['id']
+            nombre_negocio = res_neg.data.get('nombre_negocio', 'Negocio')
+        else:
+            # 2. Si no está en negocios, buscar en la tabla 'users' (columna username)
+            res_user = client.table("users").select("id_negocio").eq("username", email).maybe_single().execute()
+            if res_user.data:
+                id_negocio = res_user.data['id_negocio']
+                # Obtener nombre del negocio para este usuario
+                neg_info = client.table("negocios").select("nombre_negocio").eq("id", id_negocio).maybe_single().execute()
+                if neg_info.data:
+                    nombre_negocio = neg_info.data['nombre_negocio']
+
+        if not id_negocio:
+            # No revelar que el email no existe por seguridad
+            return {"success": True}
+
+        # Invalidar tokens anteriores
         client.table("password_reset_tokens").update({"usado": True}).eq("email", email).eq("usado", False).execute()
 
         # Generar token seguro
@@ -499,12 +514,13 @@ def create_password_reset_token(email: str) -> dict:
             "token_hash": token_hash,
             "expires_at": expires_at,
             "usado":      False,
+            "id_negocio": id_negocio # Asegurar que se vincula al negocio
         }).execute()
 
         return {
             "success":       True,
             "raw_token":     raw_token,
-            "nombre_negocio": res.data.get("nombre_negocio", ""),
+            "nombre_negocio": nombre_negocio,
             "email":         email,
         }
     except Exception as e:
