@@ -193,7 +193,16 @@ def serve_any_static(path):
 
 @app.route('/uploads/<filename>')
 def serve_upload(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
+    full_path = os.path.join(UPLOAD_FOLDER, filename)
+    if os.path.exists(full_path):
+        mimetype = "image/jpeg"
+        if filename.endswith(".png"): mimetype = "image/png"
+        elif filename.endswith(".webp"): mimetype = "image/webp"
+        elif filename.endswith(".gif"): mimetype = "image/gif"
+        
+        with open(full_path, 'rb') as f:
+            return f.read(), 200, {'Content-Type': mimetype}
+    return "No encontrado", 404
 
 
 # --- API de Autenticación y Registro ---
@@ -531,8 +540,8 @@ def upload_avatar(user_id):
     ext = file.filename.rsplit('.', 1)[1].lower()
     filename = f"avatar_{user_id}_{uuid.uuid4().hex[:8]}.{ext}"
     
-    # Subir a Supabase en lugar de local
-    avatar_url = database.upload_file_to_supabase(file, filename)
+    # Subir a Supabase en lugar de local (leyendo bytes)
+    avatar_url = database.upload_file_to_supabase(file.read(), filename)
     
     if not avatar_url:
         return jsonify({"error": "Error al subir la imagen a la nube"}), 500
@@ -586,7 +595,8 @@ def add_product():
             if file.filename and allowed_image(file.filename):
                 ext = file.filename.rsplit('.', 1)[1].lower()
                 filename = f"product_{uuid.uuid4().hex[:8]}.{ext}"
-                image_path = database.upload_file_to_supabase(file, filename)
+                # Leer los bytes del archivo para asegurar compatibilidad
+                image_path = database.upload_file_to_supabase(file.read(), filename)
 
         try:
             product_id = database.add_product(session.get('business_id'), 
@@ -643,7 +653,8 @@ def update_product(product_id):
             if file.filename and allowed_image(file.filename):
                 ext = file.filename.rsplit('.', 1)[1].lower()
                 filename = f"product_{product_id}_{uuid.uuid4().hex[:8]}.{ext}"
-                image_path = database.upload_file_to_supabase(file, filename)
+                # Leer los bytes del archivo para asegurar compatibilidad
+                image_path = database.upload_file_to_supabase(file.read(), filename)
 
         database.update_product(session.get('business_id'), 
             product_id=product_id,
