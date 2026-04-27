@@ -1,262 +1,551 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro — Mordev POS</title>
-    <link rel="stylesheet" href="styles.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
-        .register-screen {
+        :root {
+            --primary: #00C8FF;
+            --primary-dark: #0055FF;
+            --primary-glow: rgba(0,200,255,0.25);
+            --bg: #0A0B0F;
+            --card: #12131A;
+            --card2: #1A1C25;
+            --border: rgba(255,255,255,0.08);
+            --text: #FFFFFF;
+            --muted: rgba(255,255,255,0.45);
+            --success: #00E5A0;
+            --error: #FF4B4B;
+            --font: 'Outfit', sans-serif;
+        }
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            background: var(--bg-main);
+            padding: 20px;
             position: relative;
             overflow: hidden;
-            padding: 20px;
+        }
+        body::before {
+            content:'';position:fixed;width:700px;height:700px;
+            background:radial-gradient(circle,rgba(0,200,255,0.07) 0%,transparent 70%);
+            top:-200px;right:-200px;pointer-events:none;
+        }
+        body::after {
+            content:'';position:fixed;width:600px;height:600px;
+            background:radial-gradient(circle,rgba(124,58,237,0.07) 0%,transparent 70%);
+            bottom:-200px;left:-200px;pointer-events:none;
         }
 
-        .register-card {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 40px;
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 44px 40px;
             width: 100%;
-            max-width: 440px;
-            border: 1px solid var(--border-light);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            max-width: 500px;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.6);
             position: relative;
             z-index: 2;
+            animation: slideUp 0.5s cubic-bezier(0.16,1,0.3,1);
         }
+        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-        .register-header {
-            text-align: center;
-            margin-bottom: 30px;
+        /* Logo */
+        .logo {
+            display:flex;align-items:center;justify-content:center;gap:14px;
+            margin-bottom:28px;
         }
+        .logo-icon {
+            width:52px;height:52px;
+            background:linear-gradient(135deg,#00C8FF,#0055FF);
+            border-radius:14px;
+            display:flex;align-items:center;justify-content:center;
+            box-shadow:0 0 24px var(--primary-glow);
+        }
+        .logo-icon svg{width:28px;height:28px}
+        .logo-text{font-size:22px;font-weight:800;letter-spacing:-0.5px}
+        .logo-text span{color:var(--primary)}
 
-        .register-icon {
-            font-size: 48px;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 15px;
+        /* Steps indicator */
+        .steps {
+            display:flex;align-items:center;gap:8px;
+            margin-bottom:32px;
         }
+        .step-item {
+            display:flex;align-items:center;gap:6px;
+            flex:1;
+        }
+        .step-circle {
+            width:28px;height:28px;border-radius:50%;
+            display:flex;align-items:center;justify-content:center;
+            font-size:13px;font-weight:700;
+            border:2px solid rgba(255,255,255,0.12);
+            color:var(--muted);
+            transition:all 0.3s;
+            flex-shrink:0;
+        }
+        .step-circle.active{border-color:var(--primary);color:var(--primary);background:rgba(0,200,255,0.1)}
+        .step-circle.done{background:var(--primary);border-color:var(--primary);color:#000}
+        .step-label{font-size:12px;color:var(--muted);font-weight:500;transition:color 0.3s}
+        .step-label.active{color:var(--primary)}
+        .step-sep{height:1px;flex:1;background:rgba(255,255,255,0.08)}
 
-        .register-header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--text-light);
-            margin: 0;
-            font-family: 'Outfit', sans-serif;
-            letter-spacing: -0.5px;
-        }
+        h2{font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:-0.3px}
+        .subtitle{color:var(--muted);font-size:14px;margin-bottom:28px;line-height:1.6}
 
-        .register-header p {
-            color: var(--text-muted);
-            margin-top: 5px;
-            font-size: 15px;
+        /* Inputs */
+        .field{margin-bottom:16px}
+        .field label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:7px}
+        .input-wrap {
+            display:flex;align-items:center;
+            background:rgba(255,255,255,0.04);
+            border:1px solid var(--border);
+            border-radius:12px;
+            padding:0 14px;
+            transition:border-color 0.2s,box-shadow 0.2s;
         }
+        .input-wrap:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+        .input-wrap.valid{border-color:var(--success)}
+        .input-wrap .material-icons-round{color:var(--muted);font-size:19px;margin-right:10px}
+        .input-wrap input,.input-wrap select{
+            flex:1;background:transparent;border:none;
+            color:var(--text);font-family:var(--font);font-size:15px;
+            padding:13px 0;outline:none;
+        }
+        .input-wrap select option{background:#1A1C25;color:white}
+        input::placeholder{color:rgba(255,255,255,0.2)}
 
-        .register-form .input-group {
-            margin-bottom: 20px;
-        }
+        /* Referral check badge */
+        .ref-badge{display:none;font-size:12px;margin-top:6px;padding:6px 12px;border-radius:8px;font-weight:500}
+        .ref-badge.ok{display:flex;align-items:center;gap:6px;background:rgba(0,229,160,0.1);color:var(--success);border:1px solid rgba(0,229,160,0.2)}
+        .ref-badge.ko{display:flex;align-items:center;gap:6px;background:rgba(255,75,75,0.08);color:var(--error);border:1px solid rgba(255,75,75,0.15)}
+        .ref-badge .material-icons-round{font-size:16px}
 
-        .register-form input {
-            padding-left: 45px;
-            height: 50px;
-            font-size: 15px;
+        /* Theme selector cards */
+        .theme-grid{
+            display:grid;grid-template-columns:1fr 1fr;
+            gap:12px;margin-bottom:24px;
         }
+        .theme-card {
+            background:var(--card2);
+            border:2px solid rgba(255,255,255,0.07);
+            border-radius:16px;
+            padding:20px 16px;
+            cursor:pointer;
+            transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
+            text-align:center;
+            position:relative;
+            overflow:hidden;
+        }
+        .theme-card::before {
+            content:'';position:absolute;inset:0;
+            background:radial-gradient(circle at 50% 0%, var(--tc,transparent) 0%, transparent 70%);
+            opacity:0;transition:opacity 0.3s;
+        }
+        .theme-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,0.15)}
+        .theme-card:hover::before{opacity:0.5}
+        .theme-card.selected{border-color:var(--tc, var(--primary));box-shadow:0 0 20px var(--tc-glow,var(--primary-glow))}
+        .theme-card.selected::before{opacity:1}
+        .theme-card.selected .check-icon{display:flex}
 
-        .btn-register {
-            height: 50px;
-            font-size: 16px;
-            margin-top: 10px;
+        .check-icon {
+            display:none;
+            position:absolute;top:10px;right:10px;
+            width:22px;height:22px;border-radius:50%;
+            background:var(--tc,var(--primary));
+            align-items:center;justify-content:center;
         }
+        .check-icon .material-icons-round{font-size:14px;color:#000}
 
-        .login-link {
-            text-align: center;
-            margin-top: 25px;
-            color: var(--text-muted);
-            font-size: 14px;
+        .theme-emoji{font-size:32px;display:block;margin-bottom:10px}
+        .theme-name{font-size:14px;font-weight:700;margin-bottom:4px;display:block}
+        .theme-color-dot{
+            display:inline-block;
+            width:10px;height:10px;border-radius:50%;
+            margin-right:5px;vertical-align:middle;
         }
+        .theme-color-label{font-size:11px;color:var(--muted);font-weight:500}
 
-        .login-link a {
-            color: var(--accent-blue);
-            text-decoration: none;
-            font-weight: 600;
+        /* Preview strip */
+        .theme-preview {
+            background:var(--card2);
+            border:1px solid var(--border);
+            border-radius:12px;
+            padding:14px 16px;
+            margin-bottom:24px;
+            display:flex;
+            align-items:center;
+            gap:12px;
         }
+        .preview-icon{font-size:24px}
+        .preview-label{font-size:13px;color:var(--muted)}
+        .preview-label strong{color:var(--text);display:block;font-size:14px}
 
-        .login-link a:hover {
-            text-decoration: underline;
+        /* Buttons */
+        .btn-row{display:flex;gap:10px;margin-top:4px}
+        .btn-back {
+            padding:14px 20px;
+            background:rgba(255,255,255,0.06);
+            border:1px solid var(--border);
+            border-radius:12px;
+            color:var(--muted);
+            font-family:var(--font);font-size:14px;font-weight:600;
+            cursor:pointer;display:flex;align-items:center;gap:6px;
+            transition:background 0.2s;
         }
+        .btn-back:hover{background:rgba(255,255,255,0.1);color:var(--text)}
+        .btn-primary {
+            flex:1;padding:14px;
+            background:linear-gradient(135deg,#00C8FF,#0055FF);
+            border:none;border-radius:12px;
+            color:white;font-family:var(--font);font-size:15px;font-weight:700;
+            cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+            transition:transform 0.2s,box-shadow 0.2s,opacity 0.2s;
+            box-shadow:0 6px 20px rgba(0,200,255,0.3);
+            letter-spacing:0.2px;
+        }
+        .btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,200,255,0.4)}
+        .btn-primary:disabled{opacity:0.5;cursor:not-allowed}
+        .btn-primary .material-icons-round{font-size:20px}
 
-        /* Ambient background glow */
-        .ambient-glow {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(0, 200, 255, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
-            top: -200px;
-            right: -200px;
-            border-radius: 50%;
-            z-index: 1;
-            pointer-events: none;
+        .error-msg{
+            background:rgba(255,75,75,0.1);border:1px solid rgba(255,75,75,0.2);
+            border-radius:10px;padding:10px 14px;
+            font-size:13px;color:var(--error);
+            display:none;align-items:center;gap:8px;margin-top:12px;
         }
+        .error-msg.show{display:flex}
+        .error-msg .material-icons-round{font-size:17px;flex-shrink:0}
 
-        .ambient-glow-2 {
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(150, 0, 255, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
-            bottom: -200px;
-            left: -150px;
-            border-radius: 50%;
-            z-index: 1;
-            pointer-events: none;
-        }
+        .login-link{text-align:center;margin-top:20px;font-size:13px;color:var(--muted)}
+        .login-link a{color:var(--primary);font-weight:600;text-decoration:none}
+        .login-link a:hover{text-decoration:underline}
 
-        .success-state {
-            display: none;
-            text-align: center;
-            padding: 20px 0;
+        /* Success */
+        .success-state{display:none;text-align:center;padding:12px 0}
+        .success-icon{
+            width:76px;height:76px;
+            background:rgba(0,229,160,0.1);
+            border:2px solid rgba(0,229,160,0.3);
+            border-radius:50%;
+            display:flex;align-items:center;justify-content:center;
+            margin:0 auto 20px;
         }
-
-        .success-state .material-icons-round {
-            font-size: 64px;
-            color: var(--accent-green);
-            margin-bottom: 20px;
-        }
+        .success-icon .material-icons-round{font-size:38px;color:var(--success)}
+        .success-state h2{margin-bottom:10px}
+        .success-state p{color:var(--muted);font-size:14px;margin-bottom:28px;line-height:1.6}
     </style>
 </head>
-
 <body>
-    <div class="ambient-glow"></div>
-    <div class="ambient-glow-2"></div>
 
-    <!-- Toast Notification (Reused from index.html) -->
-    <div class="toast" id="toast" style="display:none; position:fixed; top:20px; right:20px; z-index:9999;">
-        <span class="material-icons-round" id="toastIcon">info</span>
-        <span id="toastMsg">Mensaje</span>
+<div class="card">
+    <!-- Logo -->
+    <div class="logo">
+        <div class="logo-icon">
+            <svg viewBox="0 0 40 40" fill="none">
+                <path d="M6 32V8l14 16L34 8v24" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <div class="logo-text">Mordev <span>POS</span></div>
     </div>
 
-    <div class="register-screen">
-        <div class="register-card">
-            <!-- Normal Form -->
-            <div id="registerFormContainer">
-                <div class="register-header">
-                    <span class="material-icons-round register-icon">storefront</span>
-                    <h1>Crea tu Negocio</h1>
-                    <p>Obtén 30 días de prueba gratis con Mordev POS</p>
-                </div>
-                <form id="registerForm" class="register-form" onsubmit="return handleRegister(event)">
-                    <div class="input-group">
-                        <span class="material-icons-round">business</span>
-                        <input type="text" id="regBusinessName" placeholder="Nombre de tu Negocio" required>
-                    </div>
-                    <div class="input-group">
-                        <span class="material-icons-round">email</span>
-                        <input type="email" id="regEmail" placeholder="Tu correo electrónico (Admin)" required>
-                    </div>
-                    <div class="input-group">
-                        <span class="material-icons-round">lock</span>
-                        <input type="password" id="regPassword" placeholder="Contraseña maestra" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full btn-register" id="btnRegister">
-                        <span class="material-icons-round">rocket_launch</span>
-                        Comenzar Ahora
-                    </button>
-                    <p id="registerError" class="error-msg" style="display:none; text-align:center; margin-top:15px;">
-                    </p>
-                </form>
+    <!-- Toast -->
+    <div id="toast" style="display:none;position:fixed;top:20px;right:20px;z-index:9999;
+         padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;
+         align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,0.4)">
+        <span class="material-icons-round" id="toastIcon">info</span>
+        <span id="toastMsg"></span>
+    </div>
 
-                <div class="login-link">
-                    ¿Ya tienes una cuenta? <a href="/pos">Inicia Sesión</a>
+    <!-- ── PASO 1: Datos del negocio ── -->
+    <div id="step1">
+        <!-- Steps indicator -->
+        <div class="steps">
+            <div class="step-item">
+                <div class="step-circle active" id="sc1">1</div>
+                <span class="step-label active">Tu negocio</span>
+            </div>
+            <div class="step-sep"></div>
+            <div class="step-item">
+                <div class="step-circle" id="sc2">2</div>
+                <span class="step-label" id="sl2">Tu estilo</span>
+            </div>
+        </div>
+
+        <h2>Crea tu negocio</h2>
+        <p class="subtitle">Obtén 30 días de prueba gratis con Mordev POS.</p>
+
+        <form id="step1Form" onsubmit="return goStep2(event)">
+            <div class="field">
+                <label>Nombre del negocio</label>
+                <div class="input-wrap">
+                    <span class="material-icons-round">business</span>
+                    <input type="text" id="regBusinessName" placeholder="Ej: PawStore Canino" required>
                 </div>
             </div>
-
-            <!-- Success State -->
-            <div id="successState" class="success-state">
-                <span class="material-icons-round">check_circle</span>
-                <h2 style="color:var(--text-light); margin-bottom:10px;">¡Cuenta Creada!</h2>
-                <p style="color:var(--text-muted); margin-bottom:25px;">Tu licencia de 30 días ha sido activada
-                    correctamente.</p>
-                <a href="/pos" class="btn btn-primary" style="display:inline-flex; text-decoration:none;">
-                    Ir a Iniciar Sesión
-                </a>
+            <div class="field">
+                <label>Correo electrónico (admin)</label>
+                <div class="input-wrap">
+                    <span class="material-icons-round">email</span>
+                    <input type="email" id="regEmail" placeholder="tu@correo.com" required>
+                </div>
             </div>
+            <div class="field">
+                <label>Contraseña maestra</label>
+                <div class="input-wrap">
+                    <span class="material-icons-round">lock</span>
+                    <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres" required minlength="6">
+                </div>
+            </div>
+            <div class="field">
+                <label>Código de referido <span style="color:var(--muted);font-weight:400">(opcional)</span></label>
+                <div class="input-wrap" id="refWrap">
+                    <span class="material-icons-round">card_giftcard</span>
+                    <input type="text" id="regReferido" placeholder="Ej: MORDEV2026"
+                           oninput="verifyReferido(this.value)" style="text-transform:uppercase">
+                </div>
+                <div class="ref-badge" id="refBadge"></div>
+            </div>
+
+            <div class="error-msg" id="step1Error">
+                <span class="material-icons-round">error_outline</span>
+                <span id="step1ErrMsg"></span>
+            </div>
+
+            <div class="btn-row" style="margin-top:20px">
+                <button type="submit" class="btn-primary">
+                    <span>Siguiente</span>
+                    <span class="material-icons-round">arrow_forward</span>
+                </button>
+            </div>
+        </form>
+
+        <div class="login-link">¿Ya tienes cuenta? <a href="/pos">Inicia sesión</a></div>
+    </div>
+
+    <!-- ── PASO 2: Selector de tema ── -->
+    <div id="step2" style="display:none">
+        <div class="steps">
+            <div class="step-item">
+                <div class="step-circle done" id="sc1b">
+                    <span class="material-icons-round" style="font-size:14px">check</span>
+                </div>
+                <span class="step-label">Tu negocio</span>
+            </div>
+            <div class="step-sep"></div>
+            <div class="step-item">
+                <div class="step-circle active">2</div>
+                <span class="step-label active">Tu estilo</span>
+            </div>
+        </div>
+
+        <h2>¿Cómo es tu negocio?</h2>
+        <p class="subtitle">Elige la categoría y tu POS adoptará colores e iconos personalizados.</p>
+
+        <div class="theme-grid" id="themeGrid">
+            <!-- Generado por JS -->
+        </div>
+
+        <!-- Preview -->
+        <div class="theme-preview" id="themePreview">
+            <div class="preview-icon" id="previewEmoji">🏪</div>
+            <div>
+                <div class="preview-label">
+                    <strong id="previewName">General</strong>
+                    <span id="previewDesc">Selecciona una categoría para ver la previsualización</span>
+                </div>
+            </div>
+            <div style="margin-left:auto">
+                <div id="previewColorDot" style="width:18px;height:18px;border-radius:50%;background:#00C8FF;box-shadow:0 0 10px rgba(0,200,255,0.5)"></div>
+            </div>
+        </div>
+
+        <div class="error-msg" id="step2Error">
+            <span class="material-icons-round">error_outline</span>
+            <span id="step2ErrMsg">Selecciona una categoría para continuar.</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn-back" onclick="goBack()">
+                <span class="material-icons-round">arrow_back</span>
+                Atrás
+            </button>
+            <button class="btn-primary" id="btnFinalizar" onclick="handleRegister()">
+                <span class="material-icons-round">rocket_launch</span>
+                <span>Crear mi POS</span>
+            </button>
         </div>
     </div>
 
-    <script>
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMsg');
-            const toastIcon = document.getElementById('toastIcon');
+    <!-- ── ÉXITO ── -->
+    <div id="successState" class="success-state">
+        <div class="success-icon">
+            <span class="material-icons-round">check_circle</span>
+        </div>
+        <h2>¡Tu negocio está listo!</h2>
+        <p id="successMsg">Tu licencia de 30 días ha sido activada.<br>Ya puedes ingresar al sistema.</p>
+        <a href="/pos" class="btn-primary" style="display:inline-flex;text-decoration:none;width:auto;padding:14px 32px">
+            <span class="material-icons-round">login</span>
+            Ir a Iniciar Sesión
+        </a>
+    </div>
+</div>
 
-            toastMsg.textContent = message;
-            toast.className = `toast ${type}`;
-            toastIcon.textContent = type === 'success' ? 'check_circle' : 'error';
-            toast.style.display = 'flex';
-            toast.style.background = type === 'error' ? 'rgba(255, 68, 68, 0.9)' : 'rgba(45, 212, 168, 0.9)';
-            toast.style.color = 'white';
-            toast.style.padding = '12px 24px';
-            toast.style.borderRadius = '8px';
-            toast.style.alignItems = 'center';
-            toast.style.gap = '8px';
-            toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+<script>
+    // ── Temas predefinidos ───────────────────────────────────────────────────
+    const THEMES = [
+        { id:'mascotas',   emoji:'🐾', name:'Mascotas',   color:'#00D1FF', glow:'rgba(0,209,255,0.25)',  desc:'Tienda de mascotas, veterinaria' },
+        { id:'carros',     emoji:'🚗', name:'Carros',     color:'#FFD700', glow:'rgba(255,215,0,0.2)',   desc:'Taller, autolavado, repuestos'   },
+        { id:'comida',     emoji:'🍔', name:'Comida',     color:'#FF4B2B', glow:'rgba(255,75,43,0.2)',   desc:'Restaurante, cafetería, comidas'  },
+        { id:'tecnologia', emoji:'💻', name:'Tecnología', color:'#7C3AED', glow:'rgba(124,58,237,0.25)', desc:'Tienda tech, reparaciones'       },
+    ];
 
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3500);
+    let selectedTheme = null;
+
+    // ── Render grid de temas ─────────────────────────────────────────────────
+    function renderThemeGrid() {
+        const grid = document.getElementById('themeGrid');
+        grid.innerHTML = THEMES.map(t => `
+            <div class="theme-card" id="tc-${t.id}"
+                 style="--tc:${t.color};--tc-glow:${t.glow}"
+                 onclick="selectTheme('${t.id}')">
+                <div class="check-icon">
+                    <span class="material-icons-round">check</span>
+                </div>
+                <span class="theme-emoji">${t.emoji}</span>
+                <span class="theme-name">${t.name}</span>
+                <span class="theme-color-label">
+                    <span class="theme-color-dot" style="background:${t.color}"></span>
+                    ${t.color}
+                </span>
+            </div>
+        `).join('');
+    }
+
+    function selectTheme(id) {
+        selectedTheme = THEMES.find(t => t.id === id);
+        // Deselect all
+        document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+        document.getElementById('tc-' + id).classList.add('selected');
+        // Update preview
+        document.getElementById('previewEmoji').textContent   = selectedTheme.emoji;
+        document.getElementById('previewName').textContent    = selectedTheme.name;
+        document.getElementById('previewDesc').textContent    = selectedTheme.desc;
+        document.getElementById('previewColorDot').style.background  = selectedTheme.color;
+        document.getElementById('previewColorDot').style.boxShadow   = `0 0 12px ${selectedTheme.glow}`;
+        document.getElementById('step2Error').classList.remove('show');
+    }
+
+    // ── Verificar código de referido ─────────────────────────────────────────
+    let refTimeout = null;
+    function verifyReferido(val) {
+        const badge = document.getElementById('refBadge');
+        if (refTimeout) clearTimeout(refTimeout);
+        if (!val || val.trim().length < 3) {
+            badge.className = 'ref-badge';
+            return;
         }
-
-        async function handleRegister(event) {
-            event.preventDefault();
-
-            const btn = document.getElementById('btnRegister');
-            const errorEl = document.getElementById('registerError');
-
-            const nombre_negocio = document.getElementById('regBusinessName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value;
-
-            btn.disabled = true;
-            btn.innerHTML = '<span class="material-icons-round">hourglass_top</span> Creando...';
-            errorEl.style.display = 'none';
-
+        refTimeout = setTimeout(async () => {
             try {
-                const response = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre_negocio, email, password })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Ocurrió un error en el registro');
+                const res  = await fetch(`/api/vendedores/verificar/${val.trim().toUpperCase()}`);
+                const data = await res.json();
+                if (data.valido) {
+                    badge.className = 'ref-badge ok';
+                    badge.innerHTML = `<span class="material-icons-round">verified</span> Código válido — vendedor: <strong>${data.nombre_vendedor}</strong>`;
+                } else {
+                    badge.className = 'ref-badge ko';
+                    badge.innerHTML = `<span class="material-icons-round">cancel</span> Código no encontrado`;
                 }
+            } catch { badge.className = 'ref-badge'; }
+        }, 600);
+    }
 
-                // Show success state
-                document.getElementById('registerFormContainer').style.display = 'none';
-                document.getElementById('successState').style.display = 'block';
-
-            } catch (err) {
-                errorEl.textContent = err.message;
-                errorEl.style.display = 'block';
-                btn.disabled = false;
-                btn.innerHTML = '<span class="material-icons-round">rocket_launch</span> Comenzar Ahora';
-            }
-
+    // ── Navegación entre pasos ───────────────────────────────────────────────
+    function goStep2(event) {
+        event.preventDefault();
+        const err    = document.getElementById('step1Error');
+        const errMsg = document.getElementById('step1ErrMsg');
+        const pwd    = document.getElementById('regPassword').value;
+        if (pwd.length < 6) {
+            errMsg.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+            err.classList.add('show');
             return false;
         }
-    </script>
-</body>
+        err.classList.remove('show');
+        document.getElementById('step1').style.display = 'none';
+        document.getElementById('step2').style.display = 'block';
+        renderThemeGrid();
+        return false;
+    }
 
+    function goBack() {
+        document.getElementById('step2').style.display = 'none';
+        document.getElementById('step1').style.display = 'block';
+    }
+
+    // ── Registro final ───────────────────────────────────────────────────────
+    async function handleRegister() {
+        if (!selectedTheme) {
+            document.getElementById('step2Error').classList.add('show');
+            return;
+        }
+        const btn = document.getElementById('btnFinalizar');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-icons-round">hourglass_top</span> Creando...';
+
+        const body = {
+            nombre_negocio: document.getElementById('regBusinessName').value.trim(),
+            email:          document.getElementById('regEmail').value.trim(),
+            password:       document.getElementById('regPassword').value,
+            codigo_referido:document.getElementById('regReferido').value.trim().toUpperCase() || null,
+            categoria:      selectedTheme.id,
+            color_hex:      selectedTheme.color,
+        };
+
+        try {
+            const res  = await fetch('/api/register', {
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify(body),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Error en el registro');
+
+            // Éxito
+            document.getElementById('step2').style.display = 'none';
+            const sm = document.getElementById('successMsg');
+            if (data.vendedor_vinculado) {
+                sm.innerHTML = 'Tu licencia de 30 días ha sido activada.<br>Registrado con código de referido ✓';
+            }
+            document.getElementById('successState').style.display = 'block';
+
+        } catch (err) {
+            const errEl  = document.getElementById('step2Error');
+            const errMsg = document.getElementById('step2ErrMsg');
+            errMsg.textContent = err.message;
+            errEl.classList.add('show');
+            btn.disabled = false;
+            btn.innerHTML = '<span class="material-icons-round">rocket_launch</span> Crear mi POS';
+        }
+    }
+
+    function showToast(msg, type='success') {
+        const t = document.getElementById('toast');
+        document.getElementById('toastMsg').textContent = msg;
+        document.getElementById('toastIcon').textContent = type==='success'?'check_circle':'error';
+        t.style.background = type==='success'?'rgba(0,229,160,0.9)':'rgba(255,75,75,0.9)';
+        t.style.color='white';t.style.display='flex';
+        setTimeout(()=>t.style.display='none',3500);
+    }
+</script>
+</body>
 </html>

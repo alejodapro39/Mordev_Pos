@@ -27,6 +27,13 @@
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --sidebar-width: 260px;
     --font: 'Outfit', 'Inter', -apple-system, sans-serif;
+    /* Design Tokens — inyectados dinámicamente por JS */
+    --brand-primary: #00C8FF;
+    --brand-primary-rgb: 0, 200, 255;
+    --brand-bg: #12131A;
+    --bg-main: #12131A;
+    --border-light: rgba(255,255,255,0.08);
+    --text-light: #FFFFFF;
 }
 
 * {

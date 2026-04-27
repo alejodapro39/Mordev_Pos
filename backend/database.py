@@ -4,10 +4,9 @@ from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from supabase import create_client, Client
 import openpyxl
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except: pass
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ── Conexión a Supabase ────────────────────────────────────────────────────────
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://rrfkqqvdzslyufqxuome.supabase.co")
@@ -20,9 +19,12 @@ def get_client() -> Client:
 
 # ── REGISTRO Y NEGOCIOS (Multi-tenant SaaS) ────────────────────────────────────
 
-def registrar_nuevo_negocio(nombre_negocio, email, password):
+def registrar_nuevo_negocio(nombre_negocio, email, password,
+                             codigo_referido=None, categoria="general",
+                             color_hex=None, icono_slug=None):
     """
     Crea un nuevo negocio (tenant), le asigna 30 días de prueba, y crea su primer usuario (admin).
+    Acepta código de referido del vendedor y categoría del negocio.
     """
     client = get_client()
     try:
@@ -31,27 +33,53 @@ def registrar_nuevo_negocio(nombre_negocio, email, password):
         if existing_negocio and hasattr(existing_negocio, 'data') and existing_negocio.data:
             return {"error": "Ya existe un negocio registrado con este correo."}
 
-        # 2. Crear ID único para el negocio (tenant ID)
+        # 2. Resolver vendedor por código referido (opcional)
+        vendedor_id = None
+        if codigo_referido:
+            vend = get_vendedor_by_codigo(codigo_referido)
+            if vend:
+                vendedor_id = vend["id"]
+
+        # 3. Resolver design tokens según categoría si no se envían explícitamente
+        THEME_PRESETS = {
+            "mascotas":   {"color": "#00D1FF", "icon": "pets"},
+            "comida":     {"color": "#FF4B2B", "icon": "restaurant"},
+            "carros":     {"color": "#FFD700", "icon": "directions_car"},
+            "tecnologia": {"color": "#7C3AED", "icon": "computer"},
+            "general":    {"color": "#00C8FF", "icon": "storefront"},
+        }
+        preset = THEME_PRESETS.get(categoria, THEME_PRESETS["general"])
+        final_color = color_hex or preset["color"]
+        final_icon  = icono_slug or preset["icon"]
+
+        # 4. Crear ID único para el negocio (tenant ID)
         id_negocio = str(uuid.uuid4())
 
         # Calcular vencimiento (30 días)
         from datetime import timedelta
         vencimiento = datetime.now(timezone.utc) + timedelta(days=30)
 
-        # 3. Insertar el negocio
-        client.table("negocios").insert({
+        # 5. Insertar el negocio
+        negocio_data = {
             "id": id_negocio,
             "nombre_negocio": nombre_negocio,
             "email": email,
             "licencia_activa": True,
-            "fecha_vencimiento": vencimiento.isoformat()
-        }).execute()
+            "fecha_vencimiento": vencimiento.isoformat(),
+            "categoria": categoria,
+            "color_hex": final_color,
+            "icono_slug": final_icon,
+        }
+        if vendedor_id:
+            negocio_data["vendedor_id"] = vendedor_id
 
-        # 4. Crear el usuario administrador para este negocio
+        client.table("negocios").insert(negocio_data).execute()
+
+        # 6. Crear el usuario administrador para este negocio
         password_hash = generate_password_hash(password)
         res_user = client.table("users").insert({
             "id_negocio": id_negocio,
-            "username": email, # Usamos el email como username inicial
+            "username": email,
             "password_hash": password_hash,
             "role": "admin"
         }).execute()
@@ -63,8 +91,14 @@ def registrar_nuevo_negocio(nombre_negocio, email, password):
             user_id = res_user[0]['id']
         elif isinstance(res_user, dict) and 'data' in res_user:
             user_id = res_user['data'][0]['id']
-            
-        return {"success": True, "id_negocio": id_negocio, "user_id": user_id}
+
+        return {
+            "success": True,
+            "id_negocio": id_negocio,
+            "user_id": user_id,
+            "theme": {"color_hex": final_color, "icono_slug": final_icon, "categoria": categoria},
+            "vendedor_vinculado": vendedor_id is not None,
+        }
     except Exception as e:
         return {"error": str(e)}
 
@@ -347,3 +381,194 @@ def delete_sale(business_id, sale_id):
         return {"success": True}
     except Exception as e:
         return {"error": str(e)}
+
+
+# ── Vendedores (socios comerciales) ────────────────────────────────────────────
+
+def get_vendedor_by_codigo(codigo_referido: str):
+    """Busca un vendedor por su código de referido único."""
+    try:
+        res = get_client().table("vendedores").select("*").eq("codigo_referido", codigo_referido).eq("activo", True).maybe_single().execute()
+        return res.data
+    except Exception:
+        return None
+
+def get_all_vendedores():
+    """Lista todos los vendedores activos."""
+    try:
+        return get_client().table("vendedores").select("*").eq("activo", True).order("nombre").execute().data or []
+    except Exception:
+        return []
+
+def create_vendedor(nombre, codigo_referido, email=None, comision=0.20, datos_pago=None):
+    """Crea un nuevo vendedor/socio comercial."""
+    client = get_client()
+    data = {
+        "nombre": nombre,
+        "codigo_referido": codigo_referido.upper().strip(),
+        "comision_porcentaje": comision,
+        "datos_pago": datos_pago or {"tipo": "nequi", "numero": ""},
+    }
+    if email:
+        data["email"] = email
+    try:
+        res = client.table("vendedores").insert(data).execute()
+        return {"success": True, "id": res.data[0]["id"]}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# ── Design Tokens / Tema del Negocio ───────────────────────────────────────────
+
+THEME_PRESETS = {
+    "mascotas":   {"color_hex": "#00D1FF", "bg_hex": "#1A1C23", "icono_slug": "pets"},
+    "comida":     {"color_hex": "#FF4B2B", "bg_hex": "#121212", "icono_slug": "restaurant"},
+    "carros":     {"color_hex": "#FFD700", "bg_hex": "#000000", "icono_slug": "directions_car"},
+    "tecnologia": {"color_hex": "#7C3AED", "bg_hex": "#0F0F1A", "icono_slug": "computer"},
+    "general":    {"color_hex": "#00C8FF", "bg_hex": "#12131A", "icono_slug": "storefront"},
+}
+
+def get_business_theme(business_id: str) -> dict:
+    """Devuelve los datos de tema (color, icono, categoría) del negocio."""
+    try:
+        res = get_client().table("negocios").select(
+            "nombre_negocio, categoria, color_hex, icono_slug"
+        ).eq("id", business_id).maybe_single().execute()
+        if not res.data:
+            return THEME_PRESETS["general"]
+
+        cat   = res.data.get("categoria", "general") or "general"
+        color = res.data.get("color_hex") or THEME_PRESETS.get(cat, THEME_PRESETS["general"])["color_hex"]
+        icon  = res.data.get("icono_slug") or THEME_PRESETS.get(cat, THEME_PRESETS["general"])["icono_slug"]
+        bg    = THEME_PRESETS.get(cat, THEME_PRESETS["general"])["bg_hex"]
+
+        return {
+            "nombre_negocio": res.data.get("nombre_negocio", ""),
+            "categoria": cat,
+            "color_hex": color,
+            "bg_hex": bg,
+            "icono_slug": icon,
+        }
+    except Exception as e:
+        print(f"[THEME] Error: {e}")
+        return THEME_PRESETS["general"]
+
+def update_business_theme(business_id: str, categoria: str, color_hex: str = None, icono_slug: str = None) -> dict:
+    """Actualiza los datos de tema del negocio (solo admin)."""
+    try:
+        preset = THEME_PRESETS.get(categoria, THEME_PRESETS["general"])
+        data = {
+            "categoria": categoria,
+            "color_hex": color_hex or preset["color_hex"],
+            "icono_slug": icono_slug or preset["icono_slug"],
+        }
+        get_client().table("negocios").update(data).eq("id", business_id).execute()
+        return {"success": True, "theme": data}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# ── Recuperación de Contraseña (tokens) ────────────────────────────────────────
+import hashlib
+import secrets
+
+def create_password_reset_token(email: str) -> dict:
+    """
+    Genera un token de recuperación de contraseña.
+    El token RAW se envía por email; el hash se guarda en BD.
+    Expira en 180 segundos (3 minutos).
+    """
+    client = get_client()
+    try:
+        # Verificar que el email existe en algún negocio
+        res = client.table("negocios").select("id, nombre_negocio").eq("email", email).maybe_single().execute()
+        if not res.data:
+            # No revelar si el email existe o no (seguridad)
+            return {"success": True, "message": "Si el correo existe, recibirás las instrucciones."}
+
+        # Invalidar tokens anteriores del mismo email
+        client.table("password_reset_tokens").update({"usado": True}).eq("email", email).eq("usado", False).execute()
+
+        # Generar token seguro
+        raw_token  = secrets.token_urlsafe(32)
+        token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
+        expires_at = (datetime.now(timezone.utc) + timedelta(seconds=180)).isoformat()
+
+        client.table("password_reset_tokens").insert({
+            "email":      email,
+            "token_hash": token_hash,
+            "expires_at": expires_at,
+            "usado":      False,
+        }).execute()
+
+        return {
+            "success":       True,
+            "raw_token":     raw_token,
+            "nombre_negocio": res.data.get("nombre_negocio", ""),
+            "email":         email,
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+def validate_reset_token(raw_token: str) -> dict:
+    """
+    Valida el token de recuperación.
+    Retorna {'valid': True, 'email': ...} o {'valid': False, 'reason': ...}
+    """
+    client = get_client()
+    try:
+        token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
+        res = client.table("password_reset_tokens").select("*").eq("token_hash", token_hash).maybe_single().execute()
+
+        if not res.data:
+            return {"valid": False, "reason": "Token inválido"}
+
+        record = res.data
+        if record.get("usado"):
+            return {"valid": False, "reason": "Este enlace ya fue utilizado"}
+
+        # Verificar expiración
+        expires_at = datetime.fromisoformat(record["expires_at"].replace("Z", "+00:00"))
+        if datetime.now(timezone.utc) > expires_at:
+            return {"valid": False, "reason": "El enlace ha expirado (3 minutos). Solicita uno nuevo."}
+
+        return {"valid": True, "email": record["email"], "token_id": record["id"]}
+    except Exception as e:
+        return {"valid": False, "reason": str(e)}
+
+def update_password_by_email(email: str, new_password: str, token_id: int = None) -> dict:
+    """Actualiza la contraseña del admin de un negocio y marca el token como usado."""
+    client = get_client()
+    try:
+        new_hash = generate_password_hash(new_password)
+
+        # Obtener el negocio por email
+        neg = client.table("negocios").select("id").eq("email", email).maybe_single().execute()
+        if not neg.data:
+            return {"error": "No se encontró el negocio"}
+
+        business_id = neg.data["id"]
+
+        # Actualizar contraseña del usuario admin del negocio
+        client.table("users").update({"password_hash": new_hash}).eq("id_negocio", business_id).eq("username", email).execute()
+
+        # Marcar token como usado
+        if token_id:
+            client.table("password_reset_tokens").update({"usado": True}).eq("id", token_id).execute()
+
+        return {"success": True}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# ── Liquidaciones (Panel Admin) ────────────────────────────────────────────────
+
+def get_liquidacion_vendedores() -> list:
+    """Lee la vista liquidacion_vendedores. Solo para super-admin/interno."""
+    try:
+        res = get_client().table("liquidacion_vendedores").select("*").execute()
+        return res.data or []
+    except Exception as e:
+        print(f"[LIQUIDACION] Error: {e}")
+        return []
+

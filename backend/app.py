@@ -142,6 +142,11 @@ def serve_index():
 def serve_register():
     return send_from_directory(app.static_folder, 'register.html')
 
+@app.route('/restablecer')
+def serve_restablecer():
+    """Página de restablecimiento de contraseña (recibe ?token=...)"""
+    return send_from_directory(app.static_folder, 'restablecer.html')
+
 
 @app.route('/uploads/<filename>')
 def serve_upload(filename):
@@ -155,11 +160,146 @@ def register_business():
     data = request.get_json()
     if not data or 'nombre_negocio' not in data or 'email' not in data or 'password' not in data:
         return jsonify({"error": "Faltan campos obligatorios"}), 400
-    
-    result = database.registrar_nuevo_negocio(data['nombre_negocio'], data['email'], data['password'])
+
+    result = database.registrar_nuevo_negocio(
+        data['nombre_negocio'],
+        data['email'],
+        data['password'],
+        codigo_referido=data.get('codigo_referido', '').strip() or None,
+        categoria=data.get('categoria', 'general'),
+        color_hex=data.get('color_hex'),
+        icono_slug=data.get('icono_slug'),
+    )
     if 'error' in result:
         return jsonify(result), 400
+
+    # Enviar correo de bienvenida (no bloquea si falla)
+    try:
+        from email_service import send_welcome_email
+        send_welcome_email(data['email'], data['nombre_negocio'], data.get('categoria', 'general'))
+    except Exception as e:
+        print(f"[REGISTER] Email bienvenida falló: {e}")
+
     return jsonify(result), 201
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DESIGN TOKENS — Tema visual del negocio
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route('/api/business/theme', methods=['GET'])
+def get_theme():
+    """Devuelve el tema visual del negocio autenticado (público para splash screen)."""
+    business_id = session.get('business_id')
+    if not business_id:
+        return jsonify(database.THEME_PRESETS['general'])
+    theme = database.get_business_theme(business_id)
+    return jsonify(theme)
+
+
+@app.route('/api/business/theme', methods=['PUT'])
+@admin_required
+def update_theme():
+    """Actualiza el tema visual del negocio. Solo admin."""
+    data = request.get_json()
+    if not data or 'categoria' not in data:
+        return jsonify({"error": "Falta el campo 'categoria'"}), 400
+
+    categorias_validas = ['mascotas', 'carros', 'comida', 'tecnologia', 'general']
+    if data['categoria'] not in categorias_validas:
+        return jsonify({"error": f"Categoría inválida. Opciones: {categorias_validas}"}), 400
+
+    result = database.update_business_theme(
+        session['business_id'],
+        data['categoria'],
+        data.get('color_hex'),
+        data.get('icono_slug'),
+    )
+    if 'error' in result:
+        return jsonify(result), 400
+    return jsonify(result)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RESET PASSWORD — Flujo seguro con Resend + token de 3 minutos
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route('/api/password-reset/request', methods=['POST'])
+def request_password_reset():
+    """Solicita reset de contraseña. Genera token y envía email via Resend."""
+    data = request.get_json()
+    if not data or 'email' not in data:
+        return jsonify({"error": "Falta el campo email"}), 400
+
+    email = data['email'].strip().lower()
+    result = database.create_password_reset_token(email)
+
+    if 'error' in result:
+        return jsonify(result), 500
+
+    # Solo enviar email si se generó token real (el email existe)
+    if result.get('raw_token'):
+        try:
+            from email_service import send_password_reset_email
+            reset_url = f"{APP_BASE_URL}/restablecer?token={result['raw_token']}"
+            send_password_reset_email(email, result.get('nombre_negocio', ''), reset_url)
+        except Exception as e:
+            print(f"[RESET] Error enviando email: {e}")
+
+    # Siempre retornar el mismo mensaje (no revelar si el email existe)
+    return jsonify({"success": True, "message": "Si el correo existe, recibirás las instrucciones en unos momentos."})
+
+
+@app.route('/api/password-reset/verify', methods=['POST'])
+def verify_password_reset():
+    """Valida el token y actualiza la contraseña."""
+    data = request.get_json()
+    if not data or 'token' not in data or 'new_password' not in data:
+        return jsonify({"error": "Faltan campos: token, new_password"}), 400
+
+    if len(data['new_password']) < 6:
+        return jsonify({"error": "La contraseña debe tener al menos 6 caracteres"}), 400
+
+    # Validar token
+    validation = database.validate_reset_token(data['token'])
+    if not validation.get('valid'):
+        return jsonify({"error": validation.get('reason', 'Token inválido')}), 400
+
+    # Actualizar contraseña
+    result = database.update_password_by_email(
+        validation['email'],
+        data['new_password'],
+        token_id=validation.get('token_id')
+    )
+    if 'error' in result:
+        return jsonify(result), 500
+
+    return jsonify({"success": True, "message": "Contraseña actualizada correctamente. Ya puedes iniciar sesión."})
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# VENDEDORES (socios comerciales)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route('/api/vendedores/verificar/<codigo>', methods=['GET'])
+def verificar_codigo_referido(codigo):
+    """Verifica si un código de referido es válido (usado en el registro)."""
+    vend = database.get_vendedor_by_codigo(codigo.upper().strip())
+    if vend:
+        return jsonify({"valido": True, "nombre_vendedor": vend['nombre']})
+    return jsonify({"valido": False})
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# LIQUIDACIONES — Panel admin (requiere admin)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route('/api/admin/liquidaciones', methods=['GET'])
+@admin_required
+def get_liquidaciones():
+    """Devuelve la liquidación mensual de vendedores. Solo admin."""
+    data = database.get_liquidacion_vendedores()
+    return jsonify(data)
 
 
 @app.route('/api/login', methods=['POST'])

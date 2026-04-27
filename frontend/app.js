@@ -8,6 +8,7 @@ let selectedProductImage = null;
 let weeklyChart = null;
 let monthlyChart = null;
 let currentDraftId = null;
+let currentTheme = null;
 
 // Hardware & Config State
 let scalePollingInterval = null;
@@ -93,15 +94,115 @@ async function handleLogout() {
 }
 
 async function checkSession() {
-    // Primero verificar bloqueo del sistema
+    await initSplash();
+}
 
+// ===========================
+// SPLASH SCREEN & DESIGN TOKENS
+// ===========================
+
+const THEME_PRESETS = {
+    mascotas:   { color: '#00D1FF', bg: '#1A1C23', icon: 'pets',          emoji: '🐾' },
+    comida:     { color: '#FF4B2B', bg: '#121212', icon: 'restaurant',     emoji: '🍔' },
+    carros:     { color: '#FFD700', bg: '#000000', icon: 'directions_car', emoji: '🚗' },
+    tecnologia: { color: '#7C3AED', bg: '#0F0F1A', icon: 'computer',       emoji: '💻' },
+    general:    { color: '#00C8FF', bg: '#12131A', icon: 'storefront',     emoji: '🏪' },
+};
+
+function applyTheme(theme) {
+    if (!theme) return;
+    const preset = THEME_PRESETS[theme.categoria] || THEME_PRESETS.general;
+    const color  = theme.color_hex || preset.color;
+    const bg     = theme.bg_hex    || preset.bg;
+    const icon   = theme.icono_slug || preset.icon;
+
+    const root = document.documentElement;
+    root.style.setProperty('--brand-primary',  color);
+    root.style.setProperty('--brand-primary-rgb', hexToRgb(color));
+    root.style.setProperty('--brand-bg',       bg);
+    root.style.setProperty('--brand-icon',     `"${icon}"`);
+
+    // Update dynamic accent on buttons/borders
+    const styleEl = document.getElementById('dynamic-theme-style') || document.createElement('style');
+    styleEl.id = 'dynamic-theme-style';
+    styleEl.textContent = `
+        .btn-primary { background: linear-gradient(135deg, ${color}, ${adjustColor(color, -40)}) !important; box-shadow: 0 4px 15px ${color}40 !important; }
+        .btn-primary:hover { box-shadow: 0 6px 20px ${color}60 !important; }
+        .input-group:focus-within { border-color: ${color} !important; box-shadow: 0 0 0 3px ${color}25 !important; }
+        .nav-item.active { color: ${color} !important; background: ${color}18 !important; }
+        .nav-item:hover  { background: ${color}10 !important; }
+        .sidebar-header .material-icons-round { color: ${color} !important; }
+        .product-card:hover { border-color: ${color} !important; box-shadow: 0 4px 12px ${color}30 !important; }
+        .stat-blue .material-icons-round { color: ${color} !important; background: ${color}18 !important; }
+        .user-avatar { background: linear-gradient(135deg, ${color}, ${adjustColor(color, -40)}) !important; }
+        #brandIconEl { content: '${icon}'; }
+    `;
+    if (!styleEl.parentNode) document.head.appendChild(styleEl);
+
+    // Update sidebar icon if element exists
+    const brandIcon = document.getElementById('brandIconEl');
+    if (brandIcon) brandIcon.textContent = icon;
+
+    currentTheme = theme;
+}
+
+function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    return `${r}, ${g}, ${b}`;
+}
+
+function adjustColor(hex, amount) {
+    try {
+        let r = Math.max(0, Math.min(255, parseInt(hex.slice(1,3),16) + amount));
+        let g = Math.max(0, Math.min(255, parseInt(hex.slice(3,5),16) + amount));
+        let b = Math.max(0, Math.min(255, parseInt(hex.slice(5,7),16) + amount));
+        return '#' + [r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+    } catch { return hex; }
+}
+
+async function initSplash() {
+    // Show splash
+    const splash = document.getElementById('splashScreen');
+    if (splash) splash.style.display = 'flex';
+
+    try {
+        // Load theme first (even before session check)
+        const theme = await fetch('/api/business/theme').then(r => r.json()).catch(() => THEME_PRESETS.general);
+        applyTheme(theme);
+
+        // Update splash brand icon
+        const splashIcon = document.getElementById('splashBrandIcon');
+        if (splashIcon) {
+            const preset = THEME_PRESETS[theme.categoria] || THEME_PRESETS.general;
+            splashIcon.textContent = preset.icon;
+        }
+        if (theme.nombre_negocio) {
+            const splashName = document.getElementById('splashBusinessName');
+            if (splashName) splashName.textContent = theme.nombre_negocio;
+        }
+    } catch (e) { /* use defaults */ }
+
+    // Check session in parallel
     try {
         const data = await api('/api/me');
         currentUser = data;
-        showApp();
-    } catch (e) {
-        // Not logged in
+    } catch (e) { /* not logged in */ }
+
+    // Minimum splash time (UX)
+    await new Promise(r => setTimeout(r, 900));
+
+    // Fade out splash
+    if (splash) {
+        splash.style.opacity = '0';
+        splash.style.transition = 'opacity 0.5s ease';
+        await new Promise(r => setTimeout(r, 500));
+        splash.style.display = 'none';
+        splash.style.opacity = '1';
     }
+
+    if (currentUser) showApp();
 }
 
 // ===========================
@@ -196,14 +297,15 @@ function switchView(viewName) {
 
     // Load data
     switch (viewName) {
-        case 'dashboard': loadDashboard(); break;
-        case 'products': loadProducts(); break;
-        case 'sales': loadSaleProducts(); break;
-        case 'history': loadHistory(); break;
-        case 'users': loadUsers(); break;
-        case 'drafts': loadDrafts(); break;
-        case 'settings': loadSettings(); break;
-        case 'reports': /* nothing to load initially */ break;
+        case 'dashboard':      loadDashboard(); break;
+        case 'products':       loadProducts(); break;
+        case 'sales':          loadSaleProducts(); break;
+        case 'history':        loadHistory(); break;
+        case 'users':          loadUsers(); break;
+        case 'drafts':         loadDrafts(); break;
+        case 'settings':       loadSettings(); loadThemeSettings(); break;
+        case 'reports':        /* nothing */ break;
+        case 'liquidaciones':  loadLiquidaciones(); break;
     }
 }
 
@@ -1738,6 +1840,175 @@ async function createSubscriptionPreference() {
     } catch (e) {
         console.error('Error en pago:', e);
         showToast('Error al conectar con el servidor', 'error');
+    }
+}
+
+// ===========================
+// LIQUIDACIONES (Admin Panel)
+// ===========================
+async function loadLiquidaciones() {
+    const container = document.getElementById('liquidacionesBody');
+    if (!container) return;
+    container.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-secondary)"><span class="material-icons-round" style="font-size:32px;display:block;margin-bottom:8px">hourglass_top</span>Cargando...</td></tr>';
+    try {
+        const data = await api('/api/admin/liquidaciones');
+        if (!data.length) {
+            container.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-secondary)">No hay vendedores con negocios activos este mes.</td></tr>';
+            return;
+        }
+        container.innerHTML = data.map(v => `
+            <tr>
+                <td><strong>${escapeHtml(v.nombre_vendedor)}</strong><br>
+                    <small style="color:var(--text-secondary)">${escapeHtml(v.codigo_referido)}</small></td>
+                <td>${escapeHtml(v.email_vendedor || '—')}</td>
+                <td style="text-align:center"><span style="background:rgba(0,200,255,0.1);color:#00C8FF;padding:4px 10px;border-radius:20px;font-weight:700">${v.negocios_activos_mes}</span></td>
+                <td>${formatPrice(v.ingresos_brutos_mes || 0)}</td>
+                <td><strong style="color:#00E5A0;font-size:16px">${formatPrice(v.comision_a_pagar || 0)}</strong><br>
+                    <small style="color:var(--text-secondary)">${escapeHtml(v.datos_pago && v.datos_pago.tipo ? v.datos_pago.tipo : 'N/A')}: ${escapeHtml(v.datos_pago && v.datos_pago.numero ? v.datos_pago.numero : '—')}</small></td>
+            </tr>
+        `).join('');
+    } catch (err) {
+        container.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--accent-red)">${err.message}</td></tr>`;
+    }
+}
+
+// ===========================
+// THEME SETTINGS (Config Panel)
+// ===========================
+async function loadThemeSettings() {
+    const container = document.getElementById('themeSettingsPanel');
+    if (!container || !currentUser || currentUser.role !== 'admin') return;
+
+    const THEMES_CFG = [
+        { id:'mascotas',   emoji:'🐾', name:'Mascotas',   color:'#00D1FF' },
+        { id:'carros',     emoji:'🚗', name:'Carros',     color:'#FFD700' },
+        { id:'comida',     emoji:'🍔', name:'Comida',     color:'#FF4B2B' },
+        { id:'tecnologia', emoji:'💻', name:'Tecnología', color:'#7C3AED' },
+        { id:'general',    emoji:'🏪', name:'General',    color:'#00C8FF' },
+    ];
+
+    const active = (currentTheme && currentTheme.categoria) ? currentTheme.categoria : 'general';
+
+    container.innerHTML = `
+        <div class="settings-section">
+            <h3 style="font-size:16px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px">
+                <span class="material-icons-round" style="color:var(--brand-primary,#00C8FF)">palette</span>
+                Tema Visual del Negocio
+            </h3>
+            <p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px">
+                Cambia los colores e iconos según el nicho. Todos los usuarios verán el cambio.
+            </p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:20px">
+                ${THEMES_CFG.map(t => `
+                    <div onclick="selectConfigTheme('${t.id}')" id="tpick-${t.id}"
+                         style="background:${active===t.id?t.color+'18':'var(--bg-card-hover)'};
+                                border:2px solid ${active===t.id?t.color:'var(--border-color)'};
+                                border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;
+                                transition:all 0.2s">
+                        <div style="font-size:26px;margin-bottom:6px">${t.emoji}</div>
+                        <div style="font-size:12px;font-weight:600">${t.name}</div>
+                    </div>
+                `).join('')}
+            </div>
+            <button onclick="saveTheme()" class="btn btn-primary btn-sm" id="btnSaveTheme">
+                <span class="material-icons-round">save</span> Guardar Tema
+            </button>
+        </div>
+    `;
+}
+
+let pendingThemeCat = null;
+function selectConfigTheme(cat) {
+    pendingThemeCat = cat;
+    const preset = THEME_PRESETS[cat] || THEME_PRESETS.general;
+    document.querySelectorAll('[id^="tpick-"]').forEach(el => {
+        el.style.borderColor = 'var(--border-color)';
+        el.style.background  = 'var(--bg-card-hover)';
+    });
+    const el = document.getElementById('tpick-' + cat);
+    if (el) {
+        el.style.borderColor = preset.color;
+        el.style.background  = preset.color + '18';
+    }
+}
+
+async function saveTheme() {
+    if (!pendingThemeCat) { showToast('Selecciona un tema primero', 'error'); return; }
+    const btn = document.getElementById('btnSaveTheme');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-icons-round">hourglass_top</span> Guardando...';
+    try {
+        const res = await api('/api/business/theme', {
+            method: 'PUT',
+            body: JSON.stringify({ categoria: pendingThemeCat }),
+        });
+        applyTheme(Object.assign({}, res.theme, { categoria: pendingThemeCat }));
+        showToast('Tema actualizado correctamente');
+        pendingThemeCat = null;
+    } catch (err) {
+        showToast(err.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-icons-round">save</span> Guardar Tema';
+    }
+}
+
+// ===========================
+// PASSWORD RESET MODAL
+// ===========================
+function showPasswordResetModal() {
+    const existing = document.getElementById('pwdResetModal');
+    if (existing) { existing.style.display = 'flex'; return; }
+
+    const modal = document.createElement('div');
+    modal.id = 'pwdResetModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:10000;padding:20px';
+    modal.innerHTML = `
+        <div style="background:#12131A;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:36px;width:100%;max-width:400px">
+            <h3 style="font-size:20px;font-weight:700;margin-bottom:8px">Recuperar contraseña</h3>
+            <p style="color:rgba(255,255,255,0.5);font-size:14px;margin-bottom:24px">Ingresa tu correo y recibirás un enlace válido por <strong style="color:white">3 minutos</strong>.</p>
+            <div style="display:flex;align-items:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:0 14px;margin-bottom:16px">
+                <span class="material-icons-round" style="color:rgba(255,255,255,0.4);font-size:19px;margin-right:10px">email</span>
+                <input type="email" id="resetEmailInput" placeholder="tu@correo.com"
+                    style="flex:1;background:transparent;border:none;color:white;font-size:15px;padding:13px 0;outline:none;font-family:var(--font)">
+            </div>
+            <div id="resetModalMsg" style="display:none;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:16px"></div>
+            <div style="display:flex;gap:10px">
+                <button onclick="document.getElementById('pwdResetModal').style.display='none'"
+                    style="flex:1;padding:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:rgba(255,255,255,0.6);font-family:var(--font);font-size:14px;cursor:pointer">
+                    Cancelar
+                </button>
+                <button onclick="submitPasswordReset()" id="btnSendReset"
+                    style="flex:2;padding:12px;background:linear-gradient(135deg,#00C8FF,#0055FF);border:none;border-radius:12px;color:white;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
+                    <span class="material-icons-round" style="font-size:18px">send</span> Enviar enlace
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+    setTimeout(() => { const inp = document.getElementById('resetEmailInput'); if (inp) inp.focus(); }, 50);
+}
+
+async function submitPasswordReset() {
+    const email = document.getElementById('resetEmailInput')?.value.trim();
+    const msgEl = document.getElementById('resetModalMsg');
+    const btn   = document.getElementById('btnSendReset');
+    if (!email) return;
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-icons-round" style="font-size:18px">hourglass_top</span> Enviando...';
+
+    try {
+        await api('/api/password-reset/request', { method: 'POST', body: JSON.stringify({ email }) });
+        msgEl.style.cssText = 'display:block;background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);color:#00E5A0;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:16px';
+        msgEl.textContent   = '✓ Revisa tu correo. El enlace expira en 3 minutos.';
+    } catch (err) {
+        msgEl.style.cssText = 'display:block;background:rgba(255,75,75,0.1);border:1px solid rgba(255,75,75,0.2);color:#FF4B4B;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:16px';
+        msgEl.textContent   = err.message;
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-icons-round" style="font-size:18px">send</span> Enviar enlace';
     }
 }
 

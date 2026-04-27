@@ -26,6 +26,39 @@
     <!-- BARCODE SCANNER CAPTURE -->
     <input type="text" id="barcodeScannerCapture" autofocus>
 
+    <!-- SPLASH SCREEN -->
+    <div id="splashScreen" style="display:none;position:fixed;inset:0;z-index:99999;
+         background:#0A0B0F;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+        <!-- Logo M azul -->
+        <div style="width:80px;height:80px;background:linear-gradient(135deg,#00C8FF,#0055FF);
+                    border-radius:22px;display:flex;align-items:center;justify-content:center;
+                    box-shadow:0 0 40px rgba(0,200,255,0.4);animation:splashPulse 1.5s ease-in-out infinite">
+            <span class="material-icons-round" id="splashBrandIcon"
+                  style="font-size:42px;color:white">storefront</span>
+        </div>
+        <!-- Name -->
+        <div style="text-align:center">
+            <div style="font-family:'Outfit',sans-serif;font-size:26px;font-weight:800;
+                        color:white;letter-spacing:-0.5px">
+                Mordev <span style="color:#00C8FF">POS</span>
+            </div>
+            <div id="splashBusinessName" style="font-size:13px;color:rgba(255,255,255,0.4);
+                 font-family:'Outfit',sans-serif;margin-top:4px">Cargando tu experiencia...</div>
+        </div>
+        <!-- Spinner dots -->
+        <div style="display:flex;gap:8px;margin-top:8px">
+            <span class="splash-dot" style="animation-delay:0s"></span>
+            <span class="splash-dot" style="animation-delay:0.2s"></span>
+            <span class="splash-dot" style="animation-delay:0.4s"></span>
+        </div>
+        <style>
+            @keyframes splashPulse{0%,100%{box-shadow:0 0 30px rgba(0,200,255,0.3)}50%{box-shadow:0 0 60px rgba(0,200,255,0.6)}}
+            .splash-dot{width:8px;height:8px;border-radius:50%;background:#00C8FF;
+                        display:inline-block;animation:splashBounce 1s ease-in-out infinite;opacity:0.5}
+            @keyframes splashBounce{0%,100%{transform:translateY(0);opacity:0.4}50%{transform:translateY(-10px);opacity:1}}
+        </style>
+    </div>
+
     <!-- LOGIN SCREEN -->
     <div id="loginScreen" class="login-screen">
         <div class="login-card">
@@ -50,7 +83,11 @@
                 </button>
                 <p id="loginError" class="error-msg" style="display:none;"></p>
             </form>
-            <div style="text-align: center; margin-top: 25px; color: var(--text-muted); font-size: 14px;">
+            <div style="text-align: center; margin-top: 20px; color: var(--text-muted); font-size: 14px;">
+                <a href="javascript:void(0)" onclick="showPasswordResetModal()"
+                   style="color: var(--accent-blue); text-decoration: none; font-weight: 500;font-size:13px;">¿Olvidaste tu contraseña?</a>
+            </div>
+            <div style="text-align: center; margin-top: 14px; color: var(--text-muted); font-size: 14px;">
                 ¿No tienes una cuenta? <a href="/register"
                     style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Regístrate</a>
             </div>
@@ -98,7 +135,8 @@
             <div class="sidebar-header">
                 <img src="/static/ico.ico" alt="M" style="width:28px;height:28px;border-radius:6px;object-fit:cover;"
                     onerror="this.style.display='none'">
-                <h2>Mordev POS</h2>
+                <h2>Mordev POS <span class="material-icons-round" id="brandIconEl"
+                    style="font-size:16px;vertical-align:middle;opacity:0.7">storefront</span></h2>
             </div>
             <!-- Badge estado de licencia -->
             <div id="licenseBadge" style="
@@ -159,6 +197,10 @@
                 <li class="nav-item admin-only" data-view="reports" onclick="switchView('reports')">
                     <span class="material-icons-round">assessment</span>
                     <span>Reportes</span>
+                </li>
+                <li class="nav-item admin-only" data-view="liquidaciones" onclick="switchView('liquidaciones')">
+                    <span class="material-icons-round">payments</span>
+                    <span>Liquidaciones</span>
                 </li>
                 <li class="nav-item admin-only" data-view="import" onclick="switchView('import')">
                     <span class="material-icons-round">upload_file</span>
@@ -562,6 +604,36 @@
                     <div id="importStatus" class="import-status" style="display:none;"></div>
                 </div>
             </section>
+            </section>
+
+            <!-- LIQUIDACIONES VIEW (Admin - Comisiones de socios que venden el software) -->
+            <section id="view-liquidaciones" class="view admin-only">
+                <div class="view-header">
+                    <h1>💰 Liquidaciones del Mes</h1>
+                    <p>Comisiones de los socios comerciales que venden Mordev POS</p>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Socio Comercial</th>
+                                <th>Email / Contacto</th>
+                                <th style="text-align:center">Negocios Activos</th>
+                                <th>Ingresos Brutos</th>
+                                <th>Comisión (20%)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="liquidacionesBody">
+                            <tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-secondary)">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top:16px;padding:16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;font-size:13px;color:var(--text-secondary)">
+                    <span class="material-icons-round" style="font-size:16px;vertical-align:middle;margin-right:6px">info</span>
+                    Cálculo basado en mensualidad de <strong>$60,000 COP</strong> por negocio activo este mes. Comisión del <strong>20%</strong> por socio.
+                </div>
+            </section>
+
             <!-- REPORTS VIEW (Admin) -->
             <section id="view-reports" class="view">
                 <div class="view-header">
@@ -698,6 +770,11 @@
                                 Guardar Configuración
                             </button>
                         </div>
+                    </div>
+
+                    <!-- Tema Visual (Admin only) -->
+                    <div class="card admin-only" id="themeSettingsPanel">
+                        <!-- Populated by loadThemeSettings() -->
                     </div>
 
                 </div>

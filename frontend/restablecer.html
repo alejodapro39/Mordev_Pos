@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restablecer Contraseña — Mordev POS</title>
+    <meta name="description" content="Restablece tu contraseña de Mordev POS de forma segura.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00C8FF;
+            --primary-glow: rgba(0, 200, 255, 0.3);
+            --bg: #0A0B0F;
+            --card: #12131A;
+            --border: rgba(255,255,255,0.08);
+            --text: #FFFFFF;
+            --muted: rgba(255,255,255,0.45);
+            --error: #FF4B4B;
+            --success: #00E5A0;
+            --font: 'Outfit', sans-serif;
+            --radius: 16px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ambient glow effects */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(0,200,255,0.08) 0%, transparent 70%);
+            top: -200px; right: -200px;
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%);
+            bottom: -200px; left: -200px;
+            pointer-events: none;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+            position: relative;
+            z-index: 2;
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Logo */
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+        .logo-icon {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, #00C8FF, #0055FF);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+        .logo-icon svg { width: 32px; height: 32px; }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+        .subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        /* Form */
+        .input-group {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .input-wrap {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-wrap:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        .input-wrap .material-icons-round {
+            color: var(--muted);
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        .input-wrap input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 15px;
+            padding: 14px 0;
+            outline: none;
+        }
+        .input-wrap input::placeholder { color: rgba(255,255,255,0.25); }
+
+        /* Strength bar */
+        .strength-bar {
+            height: 3px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 99px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .strength-fill {
+            height: 100%;
+            border-radius: 99px;
+            width: 0%;
+            transition: width 0.3s, background 0.3s;
+        }
+
+        /* Timer */
+        .timer-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,170,0,0.08);
+            border: 1px solid rgba(255,170,0,0.2);
+            border-radius: 10px;
+            padding: 10px 16px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #FFAA00;
+        }
+        .timer-badge.expired {
+            background: rgba(255,75,75,0.08);
+            border-color: rgba(255,75,75,0.2);
+            color: var(--error);
+        }
+        .timer-badge .material-icons-round { font-size: 18px; }
+
+        /* Button */
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #00C8FF, #0055FF);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: var(--font);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 6px 20px rgba(0,200,255,0.3);
+            margin-top: 8px;
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(0,200,255,0.4);
+        }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary .material-icons-round { font-size: 20px; }
+
+        /* Alerts */
+        .alert {
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+        .alert.show { display: flex; }
+        .alert-error {
+            background: rgba(255,75,75,0.1);
+            border: 1px solid rgba(255,75,75,0.25);
+            color: var(--error);
+        }
+        .alert-success {
+            background: rgba(0,229,160,0.1);
+            border: 1px solid rgba(0,229,160,0.25);
+            color: var(--success);
+        }
+        .alert .material-icons-round { font-size: 18px; flex-shrink: 0; }
+
+        /* Success state */
+        .success-state { display: none; text-align: center; }
+        .success-icon {
+            width: 72px; height: 72px;
+            background: rgba(0,229,160,0.12);
+            border: 2px solid rgba(0,229,160,0.3);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .success-icon .material-icons-round { font-size: 36px; color: var(--success); }
+        .success-state h2 { font-size: 22px; margin-bottom: 8px; }
+        .success-state p { color: var(--muted); font-size: 14px; margin-bottom: 28px; line-height: 1.6; }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+        /* Expired state */
+        .expired-state { display: none; text-align: center; }
+        .expired-icon {
+            width: 72px; height: 72px;
+            background: rgba(255,75,75,0.1);
+            border: 2px solid rgba(255,75,75,0.25);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .expired-icon .material-icons-round { font-size: 36px; color: var(--error); }
+    </style>
+</head>
+<body>
+
+<div class="card" id="mainCard">
+
+    <!-- Logo -->
+    <div class="logo">
+        <div class="logo-icon">
+            <svg viewBox="0 0 40 40" fill="none">
+                <path d="M6 32V8l14 16L34 8v24" stroke="white" stroke-width="4"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Form State -->
+    <div id="formState">
+        <h1>Nueva Contraseña</h1>
+        <p class="subtitle">Ingresa tu nueva contraseña para <strong>Mordev POS</strong>.<br>Este enlace expira en 3 minutos.</p>
+
+        <!-- Timer countdown -->
+        <div class="timer-badge" id="timerBadge">
+            <span class="material-icons-round">timer</span>
+            <span id="timerText">Verificando enlace...</span>
+        </div>
+
+        <!-- Error alert -->
+        <div class="alert alert-error" id="alertError">
+            <span class="material-icons-round">error_outline</span>
+            <span id="alertErrorMsg"></span>
+        </div>
+
+        <form id="resetForm" onsubmit="return handleReset(event)">
+            <div class="input-group">
+                <label for="newPassword">Nueva contraseña</label>
+                <div class="input-wrap">
+                    <span class="material-icons-round">lock</span>
+                    <input type="password" id="newPassword" placeholder="Mínimo 6 caracteres"
+                           autocomplete="new-password" required minlength="6"
+                           oninput="checkStrength(this.value)">
+                </div>
+                <div class="strength-bar">
+                    <div class="strength-fill" id="strengthFill"></div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="confirmPassword">Confirmar contraseña</label>
+                <div class="input-wrap">
+                    <span class="material-icons-round">lock_reset</span>
+                    <input type="password" id="confirmPassword" placeholder="Repite la contraseña"
+                           autocomplete="new-password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary" id="submitBtn">
+                <span class="material-icons-round">check_circle</span>
+                Actualizar Contraseña
+            </button>
+        </form>
+    </div>
+
+    <!-- Success State -->
+    <div id="successState" class="success-state">
+        <div class="success-icon">
+            <span class="material-icons-round">check_circle</span>
+        </div>
+        <h2>¡Contraseña actualizada!</h2>
+        <p>Tu contraseña ha sido cambiada exitosamente.<br>Ya puedes iniciar sesión con tu nueva contraseña.</p>
+        <a href="/pos" class="btn-secondary">
+            <span class="material-icons-round">login</span>
+            Ir a Iniciar Sesión
+        </a>
+    </div>
+
+    <!-- Expired/Error State -->
+    <div id="expiredState" class="expired-state">
+        <div class="expired-icon">
+            <span class="material-icons-round">link_off</span>
+        </div>
+        <h2 style="color:#FF4B4B;margin-bottom:8px;">Enlace inválido</h2>
+        <p class="subtitle" id="expiredMsg">Este enlace ha expirado o ya fue utilizado.</p>
+        <a href="/pos" class="btn-secondary">
+            <span class="material-icons-round">arrow_back</span>
+            Volver al inicio
+        </a>
+    </div>
+
+</div>
+
+<script>
+    // ── Extraer token de la URL ──────────────────────────────────────────────
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    let timerInterval = null;
+    let secondsLeft   = 180; // fallback
+    let tokenValid    = false;
+
+    // ── Timer visual ─────────────────────────────────────────────────────────
+    function startTimer(seconds) {
+        secondsLeft = seconds;
+        updateTimerDisplay();
+
+        timerInterval = setInterval(() => {
+            secondsLeft--;
+            updateTimerDisplay();
+            if (secondsLeft <= 0) {
+                clearInterval(timerInterval);
+                showExpired('El enlace ha expirado. Solicita uno nuevo desde el inicio de sesión.');
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const badge   = document.getElementById('timerBadge');
+        const display = document.getElementById('timerText');
+        const mins    = Math.floor(secondsLeft / 60);
+        const secs    = secondsLeft % 60;
+
+        display.textContent = `Enlace válido por: ${mins}:${secs.toString().padStart(2, '0')}`;
+
+        if (secondsLeft <= 30) {
+            badge.classList.add('expired');
+        }
+    }
+
+    function showExpired(msg = '') {
+        clearInterval(timerInterval);
+        document.getElementById('formState').style.display = 'none';
+        document.getElementById('expiredState').style.display = 'block';
+        if (msg) document.getElementById('expiredMsg').textContent = msg;
+        tokenValid = false;
+    }
+
+    // ── Verificación inicial del token ───────────────────────────────────────
+    async function verifyToken() {
+        if (!token) {
+            showExpired('No se encontró un token en la URL. Solicita un nuevo enlace.');
+            return;
+        }
+
+        try {
+            // Calcular tiempo restante basándonos en cuando se solicitó
+            // (El servidor valida el token al enviar la nueva contraseña, aquí solo mostramos el timer)
+            startTimer(180);
+            tokenValid = true;
+        } catch (e) {
+            showExpired('Error al verificar el enlace.');
+        }
+    }
+
+    // ── Fuerza de contraseña ─────────────────────────────────────────────────
+    function checkStrength(val) {
+        const fill = document.getElementById('strengthFill');
+        let score  = 0;
+        if (val.length >= 6)  score++;
+        if (val.length >= 10) score++;
+        if (/[A-Z]/.test(val)) score++;
+        if (/[0-9]/.test(val)) score++;
+        if (/[^A-Za-z0-9]/.test(val)) score++;
+
+        const pct    = (score / 5) * 100;
+        const colors = ['#FF4B4B', '#FF8C00', '#FFAA00', '#00C8FF', '#00E5A0'];
+        fill.style.width      = pct + '%';
+        fill.style.background = colors[score - 1] || 'transparent';
+    }
+
+    // ── Submit del formulario ────────────────────────────────────────────────
+    async function handleReset(event) {
+        event.preventDefault();
+
+        const newPwd     = document.getElementById('newPassword').value;
+        const confirmPwd = document.getElementById('confirmPassword').value;
+        const errorEl    = document.getElementById('alertError');
+        const errorMsg   = document.getElementById('alertErrorMsg');
+        const btn        = document.getElementById('submitBtn');
+
+        errorEl.classList.remove('show');
+
+        if (newPwd !== confirmPwd) {
+            errorMsg.textContent = 'Las contraseñas no coinciden.';
+            errorEl.classList.add('show');
+            return false;
+        }
+        if (newPwd.length < 6) {
+            errorMsg.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+            errorEl.classList.add('show');
+            return false;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-icons-round">hourglass_top</span> Guardando...';
+
+        try {
+            const res = await fetch('/api/password-reset/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, new_password: newPwd }),
+            });
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.error || 'Error al actualizar contraseña');
+
+            // Éxito
+            clearInterval(timerInterval);
+            document.getElementById('formState').style.display = 'none';
+            document.getElementById('successState').style.display = 'block';
+
+        } catch (err) {
+            errorMsg.textContent = err.message;
+            errorEl.classList.add('show');
+            btn.disabled = false;
+            btn.innerHTML = '<span class="material-icons-round">check_circle</span> Actualizar Contraseña';
+
+            // Si el error es de expiración, mostrar estado expirado
+            if (err.message.includes('expirado') || err.message.includes('inválido') || err.message.includes('utilizado')) {
+                setTimeout(() => showExpired(err.message), 1500);
+            }
+        }
+        return false;
+    }
+
+    // Iniciar verificación al cargar
+    verifyToken();
+</script>
+</body>
+</html>
