@@ -135,6 +135,11 @@ def serve_landing():
         return redirect('/pos')
     
     full_path = os.path.join(app.static_folder, 'landing.html')
+    if os.path.exists(full_path):
+        print(f"[DEBUG] Full path: {full_path} | Size: {os.path.getsize(full_path)} bytes")
+    else:
+        print(f"[DEBUG] File NOT FOUND at: {full_path}")
+        
     return send_file(full_path)
 
 @app.route('/pos')
