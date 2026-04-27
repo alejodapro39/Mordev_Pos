@@ -17,6 +17,31 @@ def get_client() -> Client:
         raise ValueError("SUPABASE_KEY no configurada en variables de entorno")
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 
+def upload_file_to_supabase(file_data, filename: str, bucket: str = "uploads") -> str:
+    """
+    Sube un archivo a Supabase Storage y retorna su URL pública.
+    """
+    try:
+        client = get_client()
+        # Intentar subir el archivo
+        # file_data puede ser un objeto de archivo de Flask o bytes
+        res = client.storage.from_(bucket).upload(
+            path=filename,
+            file=file_data,
+            file_options={"content-type": "image/png"} # Valor genérico, Supabase lo auto-detecta usualmente
+        )
+        
+        # Obtener URL pública
+        url_res = client.storage.from_(bucket).get_public_url(filename)
+        return url_res
+    except Exception as e:
+        print(f"[STORAGE] Error subiendo archivo: {str(e)}")
+        # Si ya existe (ej. re-subida), intentamos obtener la URL igual
+        try:
+            return get_client().storage.from_(bucket).get_public_url(filename)
+        except:
+            return ""
+
 # ── REGISTRO Y NEGOCIOS (Multi-tenant SaaS) ────────────────────────────────────
 
 def registrar_nuevo_negocio(nombre_negocio, email, password,

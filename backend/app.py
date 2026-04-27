@@ -496,10 +496,13 @@ def upload_avatar(user_id):
 
     ext = file.filename.rsplit('.', 1)[1].lower()
     filename = f"avatar_{user_id}_{uuid.uuid4().hex[:8]}.{ext}"
-    filepath = os.path.join(UPLOAD_FOLDER, filename)
-    file.save(filepath)
+    
+    # Subir a Supabase en lugar de local
+    avatar_url = database.upload_file_to_supabase(file, filename)
+    
+    if not avatar_url:
+        return jsonify({"error": "Error al subir la imagen a la nube"}), 500
 
-    avatar_url = f"/uploads/{filename}"
     database.update_user_avatar(session.get('business_id'), user_id, avatar_url)
 
     return jsonify({"success": True, "avatar_path": avatar_url})
@@ -549,8 +552,7 @@ def add_product():
             if file.filename and allowed_image(file.filename):
                 ext = file.filename.rsplit('.', 1)[1].lower()
                 filename = f"product_{uuid.uuid4().hex[:8]}.{ext}"
-                file.save(os.path.join(UPLOAD_FOLDER, filename))
-                image_path = f"/uploads/{filename}"
+                image_path = database.upload_file_to_supabase(file, filename)
 
         try:
             product_id = database.add_product(session.get('business_id'), 
@@ -607,8 +609,7 @@ def update_product(product_id):
             if file.filename and allowed_image(file.filename):
                 ext = file.filename.rsplit('.', 1)[1].lower()
                 filename = f"product_{product_id}_{uuid.uuid4().hex[:8]}.{ext}"
-                file.save(os.path.join(UPLOAD_FOLDER, filename))
-                image_path = f"/uploads/{filename}"
+                image_path = database.upload_file_to_supabase(file, filename)
 
         database.update_product(session.get('business_id'), 
             product_id=product_id,
