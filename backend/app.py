@@ -60,7 +60,8 @@ def get_external_data_path():
     return os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__, 
-            static_folder=os.path.join(get_base_path(), 'frontend'))
+            static_folder=os.path.join(get_base_path(), 'frontend'),
+            static_url_path='/')
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'clave-secreta-ventas-app-2026')
 
 # Carpeta de templates para las pantallas de licencia
@@ -148,12 +149,8 @@ def serve_master():
 
 @app.route('/socio')
 def serve_socio():
-    return send_from_directory('../frontend', 'socio.html')
-
-@app.route('/<path:path>')
-def serve_any_static(path):
-    """Ruta comodín para servir JS, CSS, imágenes, etc. desde la carpeta frontend."""
-    return send_from_directory(app.static_folder, path)
+    full_path = os.path.join(app.static_folder, 'socio.html')
+    return send_file(full_path)
 
 @app.route('/register')
 def serve_register():

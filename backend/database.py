@@ -35,11 +35,12 @@ def upload_file_to_supabase(file_data, filename: str, bucket: str = "uploads") -
         url_res = client.storage.from_(bucket).get_public_url(filename)
         return url_res
     except Exception as e:
-        print(f"[STORAGE] Error subiendo archivo: {str(e)}")
-        # Si ya existe (ej. re-subida), intentamos obtener la URL igual
+        print(f"[STORAGE ERROR] No se pudo subir el archivo '{filename}': {str(e)}")
+        # Si el error es de permisos, esto saldrá aquí
         try:
             return get_client().storage.from_(bucket).get_public_url(filename)
-        except:
+        except Exception as inner_e:
+            print(f"[STORAGE ERROR] Tampoco se pudo obtener la URL pública: {str(inner_e)}")
             return ""
 
 # ── REGISTRO Y NEGOCIOS (Multi-tenant SaaS) ────────────────────────────────────
